@@ -1,0 +1,32 @@
+name: AutoDocAI Upload
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  autodoc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Zip the repo
+        run: zip -r project.zip . -x "*.git*" "*.venv*" "__pycache__/*"
+
+      - name: Validate file before sending
+        run: |
+          echo "Current directory: $(pwd)"
+          ls -lh project.zip
+          file project.zip
+          du -sh project.zip
+      - name: Send to AutoDocAI 
+        run: |
+          echo "Current directory: $(pwd)"
+          ls -lh
+          curl -f -v \
+            -H "X-API-Key: ${{ secrets.AUTODOC_API_KEY }}" \
+            -F "file=@project.zip" \
+            https://autodocai.net/generate-docs/secure/

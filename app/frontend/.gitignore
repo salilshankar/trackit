@@ -39,3 +39,4 @@ frontend/yarn-error.log*
 # Local env files
 frontend/.env*
 
+# ignore *.pid files
