@@ -2,19 +2,33 @@ name: AutoDocAI Upload
 
 on:
   push:
-    branches:
-      - main
+    branches: [ main ]
+    paths-ignore:
+      - 'docs/**'           # prevent loop when only docs change
   workflow_dispatch:
+
+permissions:
+  contents: write           # allow push
+
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   autodoc:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Zip the repo
-        run: zip -r project.zip . -x "*.git*" "*.venv*" "__pycache__/*"
+        run: |
+          zip -r project.zip . \
+            -x ".git/**" ".github/**" "*.venv/**" "__pycache__/**" \
+               "node_modules/**" "dist/**" "build/**" "*.pyc" \
+               "docs/**"                           # server generates docs; don't send them back
 
       - name: Validate file before sending
         run: |
@@ -22,17 +36,23 @@ jobs:
           ls -lh project.zip
           file project.zip
           du -sh project.zip
-      - name: Send to AutoDocAI 
+
+      - name: Send to AutoDocAI
         run: |
-          echo "Current directory: $(pwd)"
-          ls -lh
-          curl -f -v \
+          set -euo pipefail
+          echo "Uploading to AutoDocAI…"
+          curl -sS -L --retry 3 --retry-delay 2 --fail-with-body \
             -H "X-API-Key: ${{ secrets.AUTODOC_API_KEY }}" \
             -F "file=@project.zip" \
-            https://autodocai.net/generate-docs/secure/
-      
+            https://autodocai.net/generate-docs/secure/ \
+            -o docs.zip
+          echo "Download complete:"
+          ls -lh docs.zip
+
       - name: Extract docs.zip
+      # ensures /docs exists and overwrites existing generated files
         run: |
+          mkdir -p docs
           unzip -o docs.zip -d docs
           rm docs.zip
 
@@ -41,5 +61,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs
+          git status
           git commit -m "Auto-update generated docs [skip ci]" || echo "No changes to commit"
           git push
