@@ -28,9 +28,9 @@ jobs:
           zip -r project.zip . \
             -x ".git/**" ".github/**" "*.venv/**" "__pycache__/**" \
                "node_modules/**" "dist/**" "build/**" "*.pyc" \
-               "docs/**"                           # server generates docs; don't send them back
+               "docs/**"
 
-      - name: Validate file before sending
+      - name: Validate zip before sending
         run: |
           echo "Current directory: $(pwd)"
           ls -lh project.zip
@@ -41,16 +41,17 @@ jobs:
         run: |
           set -euo pipefail
           echo "Uploading to AutoDocAI…"
-          curl -sS -L --retry 3 --retry-delay 2 --fail-with-body \
+          curl -sS -L --retry 5 --retry-delay 5 --fail-with-body \
             -H "X-API-Key: ${{ secrets.AUTODOC_API_KEY }}" \
             -F "file=@project.zip" \
             https://autodocai.net/generate-docs/secure/ \
             -o docs.zip
           echo "Download complete:"
           ls -lh docs.zip
+          file docs.zip
+          unzip -t docs.zip
 
       - name: Extract docs.zip
-      # ensures /docs exists and overwrites existing generated files
         run: |
           mkdir -p docs
           unzip -o docs.zip -d docs
@@ -61,6 +62,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs
-          git status
           git commit -m "Auto-update generated docs [skip ci]" || echo "No changes to commit"
           git push
