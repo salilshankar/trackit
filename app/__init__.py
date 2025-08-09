@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory
 from app.extensions import db
 from app.routes import register_routes
-
+# Create app abcd
 def create_app():
     app = Flask(__name__)
 
