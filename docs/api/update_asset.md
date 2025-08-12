@@ -1,56 +1,53 @@
+---
 title: Update Asset
-description: Update the mutable fields (comments, asset_model, asset_type) of an existing asset by ID using PUT or PATCH.
+description: Update the mutable fields (comments, asset_model, asset_type) of an existing asset by ID.
+---
 
-# Update Asset
+Overview
+Update mutable fields of an asset. This endpoint supports partial updates: only the fields you include are changed; all others remain untouched. PUT and PATCH behave the same for this route.
 
-Update one or more mutable fields on an existing asset. This endpoint accepts partial updates: only the provided, allowed fields are modified. If no updatable fields are provided, a 400 error is returned.
+- Accepted JSON keys: comments, asset_model, asset_type
 
-- HTTP methods: PUT, PATCH
-- Endpoint: /api/assets/{asset_id}
+HTTP Methods
+- PUT
+- PATCH
+
+Endpoint
+- Path: /api/assets/{asset_id}
 - Function: update_asset
 
-## Path parameters
-
+Path Parameters
 - asset_id (integer, required): The unique identifier of the asset to update.
 
-## Request body
+Request Body
+- Content type: application/json
+- Body is a JSON object. At least one of the accepted keys must be present; unknown keys are ignored.
 
-Send a JSON object containing one or more of the following keys:
+Fields:
+- comments (string, optional): Free-form notes about the asset.
+- asset_model (string, optional): The model name/identifier for the asset.
+- asset_type (string, optional): The type/category of the asset.
 
-- comments (string, optional)
-- asset_model (string, optional)
-- asset_type (string, optional)
+Behavior and Validation
+- If none of the accepted keys are provided, the request is rejected with a 400 error.
+- Only provided allowed fields are updated; other fields are left as-is.
+- Unknown JSON keys are ignored.
 
-Notes:
-- At least one of the above keys must be present. If none are included, the server responds with 400 and {"error":"No updatable fields provided"}.
-- Any additional/unrecognized keys are ignored.
-- This route parses JSON and updates only the fields you include.
+Response
+- Success (200): Returns the updated asset as JSON. The structure is the asset’s standard representation as produced by the server’s _asset_json helper.
+- Error (400): Returns a JSON object with an error message when no updatable fields are provided. Example: {"error":"No updatable fields provided"}
+- Error (404): Returned if the asset_id does not correspond to an existing asset.
 
-Recommended header:
-- Content-Type: application/json
+Status Codes
+- 200 OK: Update succeeded.
+- 400 Bad Request: No updatable fields provided.
+- 404 Not Found: Asset not found.
 
-## Response
-
-- 200 OK: JSON representation of the updated asset. The shape is defined by the server-side serializer (_asset_json). It will include the asset’s updated state.
-- 400 Bad Request:
-  - When the request contains no updatable fields. Body: {"error":"No updatable fields provided"}.
-  - When the JSON is invalid.
-- 404 Not Found: No asset exists with the specified asset_id.
-
-## Status codes
-
-- 200 — Updated successfully
-- 400 — Invalid request (e.g., no updatable fields or invalid JSON)
-- 404 — Asset not found
-
-## Example
-
-Sample PATCH request updating comments:
-
-curl -X PATCH "https://api.yourdomain.com/api/assets/123" \
+Sample curl
+curl -X PATCH "http://localhost:5000/api/assets/123" \
   -H "Content-Type: application/json" \
-  -d '{ "comments": "Deployed to staging; ready for QA." }'
-
-Behavior notes:
-- PUT and PATCH behave the same for this endpoint (both perform partial updates).
-- Fields you omit are left unchanged.
+  -d '{
+    "comments": "Deployed to production",
+    "asset_model": "Dell R740",
+    "asset_type": "server"
+  }'

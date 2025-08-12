@@ -1,51 +1,74 @@
 title: Search Assets
-description: Retrieve assets filtered by issuance/return status and sorted by most recent activity.
+description: Retrieve a list of assets with optional status filtering and sorting by last updated time (returned_at or issued_at).
 
-Overview
-Use this endpoint to search and list assets, optionally filtering by their current status (Issued or Returned) and sorting by the most recent activity. Results are ordered by last_updated, defined as COALESCE(returned_at, issued_at), so assets are sorted by their return time if available, otherwise by their issue time.
+# Overview
 
-HTTP Method
+Use this endpoint to search and list assets. You can:
+- Filter assets by their current status (Issued or Returned).
+- Sort the results by last updated time, defined as COALESCE(returned_at, issued_at), in ascending or descending order.
+
+The response is a JSON array of asset objects.
+
+## HTTP Method
 - GET
 
-Endpoint
+## Endpoint
 - /api/assets/search
 
-Function
+## Function
 - search_assets
 
-Path Parameters
+## Path Parameters
 - None
 
-Query Parameters
-- status (string, optional): Filter results by asset status.
-  - Allowed values: Issued, Returned
-  - Note: This comparison is case-sensitive. Use exactly Issued or Returned.
-- sort (string, optional): Sort direction for last_updated.
-  - Allowed values: asc, desc
+## Query Parameters
+- status (string, optional)
+  - Accepted values: Issued | Returned
+  - Behavior:
+    - Issued: returns assets where returned_at is null (currently issued and not yet returned).
+    - Returned: returns assets where returned_at is not null.
+  - Notes: Comparison is case-sensitive; values must match exactly "Issued" or "Returned". Any other value results in no status filtering.
+
+- sort (string, optional)
+  - Accepted values: asc | desc
   - Default: desc
-  - Case-insensitive; any value other than asc is treated as desc.
+  - Case-insensitive; the value is normalized to lowercase.
+  - Sort key: last_updated = COALESCE(returned_at, issued_at)
+    - asc: oldest last_updated first
+    - desc: newest last_updated first
+  - Any value other than "asc" is treated as descending.
 
-Request Body
-- None
+## Request Body
+- None (this is a GET endpoint)
 
-Response
+## Response
 - Content type: application/json
-- Body: JSON array of asset objects.
-  - Each array element represents an asset serialized by an internal helper (_asset_json). The exact fields are not specified here and may include identifiers and metadata for each asset.
+- Body: JSON array of asset objects
+  - Each element represents an asset as produced by the server’s internal serializer (_asset_json).
+  - The precise fields are not enumerated here; expect typical asset properties along with relevant timestamps.
+- Ordering and filtering reflect the provided query parameters.
 
-Status Codes
-- 200 OK: The request succeeded. Returns an array (possibly empty) of assets.
-- 500 Internal Server Error: An unexpected error occurred on the server.
+## Status Codes
+- 200 OK — Request succeeded; returns an array (possibly empty) of assets.
+- 500 Internal Server Error — An unexpected server error occurred.
 
-Sorting Details
-- last_updated = COALESCE(returned_at, issued_at)
-- When sort=desc (default), most recently updated assets appear first.
-- When sort=asc, the oldest assets by last_updated appear first.
+## Examples
 
-Example curl
-- Retrieve issued assets, sorted by most recent activity first:
-curl -G "http://localhost:5000/api/assets/search" --data-urlencode "status=Issued" --data-urlencode "sort=desc"
+- List all assets (default: sorted by last_updated desc)
+    
+    curl -X GET "https://your-api.example.com/api/assets/search" \
+      -H "Accept: application/json"
 
-Notes
-- If status is omitted or does not match Issued or Returned exactly, no status filter is applied.
-- If sort is omitted or any value other than asc is provided, results are sorted descending by last_updated.
+- List currently issued assets, oldest first
+    
+    curl -X GET "https://your-api.example.com/api/assets/search?status=Issued&sort=asc" \
+      -H "Accept: application/json"
+
+- List returned assets, newest first (explicit)
+    
+    curl -X GET "https://your-api.example.com/api/assets/search?status=Returned&sort=desc" \
+      -H "Accept: application/json"
+
+## Notes
+- If status is omitted or not one of the accepted values, no status filter is applied.
+- If sort is omitted or not "asc", results are sorted descending by last_updated.

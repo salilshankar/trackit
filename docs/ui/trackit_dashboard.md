@@ -1,112 +1,135 @@
 ---
 title: DeviceHistory
-description: Look up device history by employee email and handle errors with a built-in recovery action.
+description: Capture an employee email, submit your request, and review details with an optional recovery action when a notification appears.
 ---
+
+# DeviceHistory
 
 ## What this component does
 
-DeviceHistory lets you submit an employee’s email address to retrieve device history. It presents a simple form inside a white, card-like section with a header, an email input, and a blue action button. If something goes wrong, a notification banner appears with the error message and a recovery action.
+DeviceHistory renders a focused, card-style section that lets you:
+- Enter an employee email address.
+- Submit the input using a primary action button.
+- See a notification banner that can include an error message and a recovery action.
+- Review detail text below, with certain values emphasized in bold.
 
-![submit form](submit-form.png)
+The layout includes:
+- A section header.
+- An input field with the placeholder “Employee Email.”
+- A primary button next to the input.
+- A NotificationBanner that displays message text and offers a recovery action.
+- A small-text details area using paragraphs and bold highlights.
+
+![lookup](device-history-lookup.png)
+
+> ℹ️ Info  
+> The button’s label isn’t specified here, but it appears next to the email field and is styled as a primary action (blue background, white text).
 
 ## How to use it
 
-1. Enter the employee’s email in the “Employee Email” field.
-2. Select the blue button next to the field to submit your request.
+1. Locate the email field.
+2. Type the employee’s email address (the placeholder reads “Employee Email”).
+3. Select the button to submit your request.
+4. If a notification banner appears, read the message. You can use its recovery action to attempt to resolve the issue.
+5. Review the details area beneath; it presents information in small text and uses bold to highlight key values.
 
-If an error occurs:
-- A notification banner will appear showing the error text.
-- Use the banner’s recovery action to attempt to resolve the issue.
+## Tips and behavior
 
-> ℹ️ Info  
-> The header text and the action button’s label may vary based on your implementation, but the button is styled as a blue primary action.
-
-## Tips and behaviors
-
-- The email field uses a standard text input with the placeholder “Employee Email.”
-- An informational area appears below the form for additional notes or details.
+- Input guidance: The field uses the placeholder “Employee Email” to indicate what to enter.
+- NotificationBanner:
+  - Shows text content (for example, an error message) when displayed.
+  - Includes a recovery action you can trigger.
 
 > 📘 Note  
-> Error handling is surfaced through a notification banner that provides both the error text and a recovery control.
+> The details section uses paragraphs with bold text to highlight important values. Actual labels and values depend on what the component renders at runtime.
 
-## Related API route
+## Related API routes
 
 - POST /api/recover  
-  Triggered by the recovery action in the notification banner to attempt a recovery operation.
+  When you use the recovery action in the notification banner, the component may call this endpoint to attempt a recovery.
 
 ---
 title: AssetTable
-description: Filter, sort, and manage items in a table with inline editing and row-level actions.
+description: Browse assets in a 9‑column table with inline updates. NEW: filter and sort controls.
 ---
 
 ## What this component does
 
-AssetTable presents a white, card-style table with filters at the top and a grid of up to nine columns below. You can:
-- Filter the list using a dropdown.
-- Sort the list ascending or descending.
-- Edit row values inline where inputs are present.
-- Use row-level action buttons to apply or discard changes.
+AssetTable displays a white, rounded card with:
+- A header and control bar
+- A status filter (dropdown)
+- A sort dropdown with options for descending and ascending
+- A helper text line under the filters
+- A 9‑column data table
+- Row-level fields for quick updates (a compact text input and a multi‑line textarea)
+- Row-level action buttons, including a blue primary action and a gray underlined secondary action
 
-![Filters at top](asset-table-filters.png)
+![Asset table overview](asset-table-overview.png)
+
+> ℹ️ Info  
+> This release adds filter controls at the top of the table.
 
 ## How to use it
 
-1. Use the filters
-   - Open the first dropdown to filter the list. It offers three choices.
-   - Use the next dropdown to set sort order. Choose desc or asc.
+1. Filter the list
+   - Open the first dropdown to select a status.
+   - The table updates to reflect your selection.
 
-2. Review helper text
-   - A small line of gray helper text may appear under the filters to provide context.
+2. Sort the results
+   - Use the second dropdown to choose sort order.
+   - Available option values include “desc” and “asc.”
 
-3. Work with the table
-   - The table shows a header row and data rows across nine columns.
-   - Some cells may display an inline text field or a multi-line field. Type directly into these fields to change values.
+3. Review the table
+   - Column headers appear in a gray header row.
+   - Data is shown in rows with clear borders for readability.
 
-4. Apply or discard changes
-   - In rows with editable fields, you’ll see:
-     - A blue primary action button to apply changes.
-     - An underlined gray button to discard changes.
-   - You may also see additional row action buttons.
+4. Make quick updates inline
+   - In a row, type into the compact text field to update a value.
+   - Use the multi‑line field to add or adjust comments.
 
-![Row actions](asset-table-row-actions.png)
+5. Apply or discard changes
+   - Use the blue primary button in the row to confirm changes.
+   - Use the gray underlined button to discard changes.
 
-## Tips and states
+![Edit a row inline](asset-table-edit.png)
 
-- Sorting
-  - The sort dropdown provides two options: desc or asc.
+## Tips and behaviors
 
-- Disabled actions
-  - When a primary action is unavailable, it appears faded (reduced opacity) and can’t be clicked.
-
+- The helper text beneath the filters provides brief guidance in a subtle gray style (small text).
+- Comments keep their formatting when displayed; line breaks are preserved.
+- The primary action button may appear disabled in certain states (it becomes semi‑transparent).
 - Empty state
-  - If there are no rows to show, a single centered message appears across the full width of the table.
+  - When no data is available, a single centered message cell spans all 9 columns to clearly indicate the empty state.
 
 > 📘 Note  
-> Column names and button labels depend on how your app provides them. This component renders the structure and controls; actual text content comes from your implementation.
+> Sort option values are “desc” and “asc.” Status options are provided by your application and may vary.
 
-## Mapped API routes
+## API routes
 
-There are no mapped API routes declared by this component.
+No mapped API routes are visible for this component.
 
 ---
 title: IssueAssetForm
-description: Select an asset type and submit it to be issued via a simple form. Submits to POST /api/assets.
+description: Choose an asset type and submit the form to create/issue an asset via your API.
 ---
+
+# IssueAssetForm
 
 ## What this component does
 
-IssueAssetForm renders a simple form to issue an asset. You choose an asset type from a required dropdown and submit the form.
+IssueAssetForm renders a simple, card-style form that lets you select an asset type and submit it. The form includes:
+- A required dropdown for choosing an asset type
+- A submit button
 
-- Includes a section heading.
-- Provides a required “Asset type” dropdown.
-- Includes a submit button that can be disabled by the component while processing.
+Visual style: white background, rounded corners, and a subtle shadow for emphasis.
 
-![submit form](submit-form.png)
+> ℹ️ Info  
+> The asset type field is required. You must pick a non-empty option before you can submit.
 
 ## How to use it
 
-1. Open the form.
-2. In the Asset type dropdown, choose one of:
+1. Open the form. You’ll see a dropdown and a submit button inside a white card.
+2. Open the dropdown and choose an asset type:
    - Laptop
    - Monitor
    - Keyboard
@@ -114,35 +137,28 @@ IssueAssetForm renders a simple form to issue an asset. You choose an asset type
    - Phone
    - Tablet
    - Other
-3. Click the submit button to issue the asset.
 
-> ℹ️ Info  
-> The dropdown is required. If the blank option is selected, the form cannot be submitted.
-
-## Field reference
-
-- Asset type (select)
-  - name: asset_type
-  - required
-  - Options: Laptop, Monitor, Keyboard, Mouse, Phone, Tablet, Other
-  - Includes an initial blank option (acts as an unselected state).
-
-## Actions
-
-- Submit button
-  - type: submit
-  - May render disabled depending on the component state.
-
-## API
-
-Submitting this form is mapped to:
-- POST /api/assets
-
-The form includes the field asset_type in the submission payload.
+   The first option is intentionally blank. Select one of the listed types to proceed.
+   ![select asset type](select-asset-type.png)
+3. Click the submit button to send your selection.
+   ![submit form](submit-form.png)
 
 > 📘 Note  
-> This component is mapped to the POST /api/assets route specifically for issuing assets.
+> The submit button may appear disabled in some states. Enablement depends on the component’s internal conditions.
+
+## Tips and validations
+
+- The asset type dropdown is required. If you try to submit without a selection, your browser will prevent submission because of the required attribute.
+- If your asset doesn’t fit a listed category, pick “Other.”
+
+## API route
+
+When you submit the form, it maps to this API endpoint:
+- POST /api/assets
+
+This route is used to create/issue the asset based on your selection.
 
 ## Props
 
-- onIssued (function, optional): A callback you can provide to handle what happens after an asset is issued.
+- onIssued  
+  Optional callback prop exposed by the component for integration needs in your application.
