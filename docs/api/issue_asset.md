@@ -1,53 +1,62 @@
-title: Issue an Asset
-description: Create a new asset assignment for an employee and return the created asset’s ID.
+title: Issue Asset
+description: Create a new asset record for an employee and return the new asset’s ID.
 
-Overview
-This endpoint issues an asset to an employee by creating a new Asset record. On success, it returns a confirmation message and the unique ID of the newly created asset.
+# Issue Asset
 
-- Content type: application/json (the request body is parsed as JSON; a Content-Type header is recommended but not strictly required)
+## Overview
+Creates a new asset record associated with an employee. On success, the service persists the asset and returns a confirmation message along with the newly created asset ID. If required fields are missing, it returns a validation error listing the missing fields.
 
-HTTP Method
-- POST
+- HTTP method(s): POST
+- Endpoint path: /api/assets
+- Function name: issue_asset
+- Path parameters: None
 
-Endpoint
-- /api/assets
+## Request Body
+Send a JSON object with the following fields:
 
-Function
-- issue_asset
+- employee_name (string, required): Employee’s full name.
+- employee_email (string, required): Employee’s email address.
+- asset_type (string, required): The type/category of the asset (e.g., "laptop", "phone").
+- asset_model (string, required): The model or specific identifier of the asset.
+- comments (string, optional): Additional notes about the asset issuance. Defaults to an empty string if omitted.
 
-Path Parameters
-- None
+Notes:
+- The server attempts to parse the body as JSON; set Content-Type: application/json to be explicit.
 
-Request Body
-Provide a JSON object with the following fields:
+## Responses
 
-- employee_name (string, required): The employee’s full name.
-- employee_email (string, required): The employee’s email address.
-- asset_type (string, required): The category of the asset (e.g., Laptop, Phone).
-- asset_model (string, required): The specific model of the asset.
-- comments (string, optional): Any additional notes about the issuance. Defaults to an empty string if omitted.
+### Success (201 Created)
+Returns a JSON object:
+- message (string): Always "Asset issued" on success.
+- id (integer): The unique identifier of the newly created asset.
 
-Response
-On success (201 Created), returns a JSON object with:
+Example:
+    {
+      "message": "Asset issued",
+      "id": 123
+    }
 
-- message (string): A human-readable confirmation message. Example: "Asset issued".
-- id (integer): The unique ID of the newly created asset.
+### Validation Error (400 Bad Request)
+Returned when one or more required fields are missing. The error message lists the missing field names.
 
-On validation error (400 Bad Request), returns a JSON object with:
+- error (string): Description of which fields are missing.
 
-- error (string): Description of the missing required fields. Example: "Missing fields: employee_email, asset_model".
+Example:
+    {
+      "error": "Missing fields: employee_email, asset_type"
+    }
 
-Status Codes
-- 201 Created: Asset record created successfully.
+## Status Codes
+- 201 Created: Asset was successfully created.
 - 400 Bad Request: One or more required fields are missing.
 
-Sample curl
-    curl -X POST https://api.example.com/api/assets \
+## Sample curl Request
+    curl -X POST https://your-domain.example.com/api/assets \
       -H "Content-Type: application/json" \
       -d '{
-        "employee_name": "Jane Doe",
-        "employee_email": "jane.doe@example.com",
-        "asset_type": "Laptop",
-        "asset_model": "Dell XPS 13",
-        "comments": "New hire - Marketing"
+        "employee_name": "Avery Johnson",
+        "employee_email": "avery.johnson@example.com",
+        "asset_type": "laptop",
+        "asset_model": "ThinkPad X1 Carbon Gen 10",
+        "comments": "Issued on first day"
       }'

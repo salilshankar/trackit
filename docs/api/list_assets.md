@@ -1,40 +1,46 @@
 title: List Assets
-description: Retrieve all assets as a JSON array, ordered from newest to oldest by issuance time.
+description: Retrieve the full list of assets as a JSON array, ordered by most recently issued first.
 
-Overview
-The List Assets endpoint returns all assets in the system as a JSON array. Results are ordered by the asset’s issued_at timestamp in descending order (newest first). This endpoint is not paginated and does not accept filters or query parameters.
+# List Assets
 
-- Content type: application/json
+## Overview
+Fetch all assets from the system. Results are returned as a JSON array and are ordered by the asset’s issued_at timestamp in descending order (newest first). This endpoint is unpaginated.
 
-HTTP Method
+- Useful for displaying the most recently issued assets at the top.
+- The exact shape of each asset in the response is defined by your server-side serializer/helper function `_asset_json`.
+
+## HTTP Method
 - GET
 
-Endpoint
+## Endpoint
 - /api/assets
 
-Function
+## Function
 - list_assets
 
-Path Parameters
+## Path Parameters
 - None
 
-Query Parameters
+## Query Parameters
 - None
 
-Request Body
+## Request Body
 - None
 
-Response
-- Type: JSON array
-- Items: Asset objects, each serialized by the server’s internal _asset_json helper. The exact fields are defined by the server; clients should treat each item as an object representing an asset.
-- Ordering: Descending by issued_at (newest first)
-- Empty result: Returns an empty array [] if there are no assets
+## Response
+- Type: JSON array of objects
+- Description: Each element represents an asset serialized via `_asset_json(a)`.
+- Ordering: Descending by `issued_at` (most recent first)
 
-Status Codes
-- 200 OK: Assets returned successfully
-- 405 Method Not Allowed: If a non-GET method is used
-- 500 Internal Server Error: Unexpected server error
+Note: Field names and types for each asset depend on the `_asset_json` serializer implementation in your codebase.
 
-Sample curl
-curl -X GET "http://localhost:5000/api/assets" \
+## Status Codes
+- 200 OK — Successfully returned the list of assets.
+- 500 Internal Server Error — An unexpected error occurred on the server.
+
+Your application may also return other status codes (e.g., 401/403) depending on global authentication/authorization middleware.
+
+## Sample Request
+
+curl -X GET "https://your-domain.example.com/api/assets" \
   -H "Accept: application/json"

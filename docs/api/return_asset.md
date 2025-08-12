@@ -1,42 +1,50 @@
-title: Return an Asset
-description: Mark an asset as returned by setting its returned_at timestamp and committing the change.
+title: Return Asset
+description: Mark an asset as returned by setting its returned_at timestamp (UTC) and receive a confirmation message.
 
-Overview
-This endpoint marks an asset as returned. It updates the asset’s returned_at timestamp to the current UTC time and commits the change. A simple confirmation message is returned on success.
+# Return Asset
 
-- Note: If called multiple times for the same asset, the returned_at timestamp is overwritten with the new current time.
+Marks the specified asset as returned. On success, the asset’s returned_at field is updated to the current UTC timestamp, and a confirmation message is returned.
 
-HTTP Method
-- POST
+This is a state-changing operation. If called multiple times for the same asset, the returned_at timestamp will be updated each time to the latest call time.
 
-Endpoint
-- /api/assets/{asset_id}/return
+- HTTP method: POST
+- Endpoint: /api/assets/{asset_id}/return
+- Function: return_asset
 
-Function
-- return_asset
+## Path parameters
 
-Path Parameters
 - asset_id (integer): The unique ID of the asset to mark as returned.
 
-Request Body
-- None
+## Request body
 
-Response
+This endpoint does not accept a request body.
+
+## Response
+
+Content type: application/json
+
 Fields:
 - message (string)
 
-Example success body:
-    {
-      "message": "Asset returned"
-    }
+Example:
+{
+  "message": "Asset returned"
+}
 
-Status Codes
-- 200 OK: Asset was successfully marked as returned.
-- 404 Not Found: No asset exists with the provided asset_id.
-- 405 Method Not Allowed: The HTTP method is not supported for this endpoint.
-- 500 Internal Server Error: An unexpected error occurred on the server.
+## Status codes
 
-Example curl
-    curl -X POST \
-      -H "Accept: application/json" \
-      https://your-domain.example.com/api/assets/123/return
+- 200 OK — Asset was found and successfully marked as returned.
+- 404 Not Found — No asset exists with the provided asset_id (or asset_id is not a valid integer for the route).
+- 405 Method Not Allowed — HTTP method other than POST was used.
+- 500 Internal Server Error — An unexpected error occurred on the server.
+
+## Sample request
+
+Replace {asset_id} with the asset’s ID. Include any required authentication headers your API uses.
+
+    curl -X POST "https://api.example.com/api/assets/123/return" \
+      -H "Accept: application/json"
+
+## Notes
+
+- The returned_at timestamp is set using the current UTC time on the server.

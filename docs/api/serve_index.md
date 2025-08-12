@@ -1,43 +1,35 @@
----
 title: GET /
-description: Serve the main index.html file for the application from the static directory.
----
+description: Serves the application’s main HTML page (index.html) from the app/static directory using Flask’s send_from_directory.
 
 Overview
-This route serves the main HTML entry point for the application. It returns the index.html file located in the app/static directory, typically used to render the frontend (for example, a single-page application).
-
-- Serves: app/static/index.html
-- Content type: text/html
-
-HTTP Method(s)
-- GET
+This endpoint returns the main HTML file for the application. It serves app/static/index.html as a static asset, which is typically used as the entry point for a web UI or single-page application (SPA).
 
 Endpoint
+- Method: GET
 - Path: /
+- Function: serve_index
 
-Function
-- Name: serve_index
-
-Path Parameters
+Path parameters
 - None
 
-Query Parameters
+Query parameters
 - None
 
-Request Body
+Request body
 - None
 
 Response
-- Body: The contents of app/static/index.html
-- Content-Type: text/html; charset=utf-8
+- Body: Contents of app/static/index.html
+- Content-Type: text/html; charset=utf-8 (typical)
 
-Status Codes
-- 200 OK — index.html was found and returned.
-- 304 Not Modified — When applicable, if the client sends conditional headers and the file hasn't changed.
-- 404 Not Found — If app/static/index.html does not exist.
-- 500 Internal Server Error — If an unexpected server error occurs while serving the file.
+Status codes
+- 200 OK: index.html served successfully.
+- 304 Not Modified: Returned when client-side caching validators (e.g., If-None-Match/ETag) indicate the resource hasn’t changed.
+- 404 Not Found: index.html not present in app/static.
+- 500 Internal Server Error: An unexpected error occurred while serving the file.
 
-Sample curl Request
-curl -i \
-  -H "Accept: text/html" \
-  http://localhost:5000/
+Sample curl
+    curl -i https://your-domain.example/
+
+Notes
+- This route uses Flask’s send_from_directory to serve a static file. Ensure app/static/index.html exists in your deployment.
