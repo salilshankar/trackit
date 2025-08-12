@@ -1,45 +1,37 @@
-title: Device History Retrieval API  
-description: Retrieve the device history for a specific user identified by their email address.
+title: GET /api/device-history/{email}
+description: Retrieve a user's device history by email. Proxies the request to a local device-history service and returns its JSON response unchanged.
 
-## Overview
+Overview
+This endpoint fetches device history data associated with a given user email. It acts as a lightweight proxy to an internal device-history service running on localhost:9002. The email is sent to that service over a TCP socket, and the JSON it returns is forwarded directly to the client.
 
-The Device History Retrieval API allows clients to obtain a history of devices associated with a specific user's email. This is useful for applications that need to track or display device usage history linked to user accounts.
+If the underlying service is unavailable or an error occurs during the socket call, the endpoint returns a 500 status with a JSON error message.
 
-### HTTP Method
+- HTTP method: GET
+- Endpoint: /api/device-history/{email}
+- Function: get_device_history
+- Content type (response): application/json
 
-- GET
+Path parameters
+- email (string, required): The user’s email address. Must be URL-encoded when used in the path (for example, user@example.com becomes user%40example.com).
 
-### Endpoint Path
+Request body
+- None.
 
-- `/api/device-history/{email}`
+Responses
+- 200 OK
+  - Body: JSON returned by the device-history service. The shape of this JSON is not modified by this endpoint and may be an object or array.
+- 500 Internal Server Error
+  - Body: JSON object with the following field:
+    - error (string): Set to "device-history-service unavailable".
 
-### Function Name
+Status codes
+- 200 — Successful retrieval of device history.
+- 500 — The internal device-history service could not be reached or an unexpected error occurred.
 
-- `get_device_history`
+Notes and limitations
+- The response body is passed through unchanged from the internal device-history service.
+- The current implementation reads up to 4096 bytes from the internal service. Very large responses may be truncated.
+- Ensure the email path segment is URL-encoded.
 
-### Path Parameters
-
-- `email` (string): The email address of the user whose device history is being requested. This parameter is required and should be URL-encoded if it contains special characters.
-
-### Request Body Fields
-
-- None. The request does not require a body.
-
-### Response
-
-The API returns a JSON object. Although the specific fields are not detailed in the metadata, we can infer that the response will typically include device history data related to the specified email. In case of an error, the response will include an error message.
-
-### Status Codes
-
-- `200 OK`: The request was successful, and the device history is returned.
-- `500 Internal Server Error`: An error occurred while contacting the device-history service. The response will include an error message indicating the service is unavailable.
-
-### Sample `curl` Request
-
-To fetch the device history for a user with the email `user@example.com`, you can use the following `curl` command:
-
-```
-curl -X GET http://localhost:5000/api/device-history/user%40example.com
-```
-
-This command assumes that the Flask server is running locally on port 5000. Adjust the host and port as necessary based on your deployment environment.
+Example curl request
+curl -X GET "https://your-domain.example.com/api/device-history/user%40example.com" -H "Accept: application/json"

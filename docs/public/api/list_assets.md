@@ -1,59 +1,48 @@
 ---
-title: List Assets API
-description: Retrieve a list of all assets with details including employee and asset information.
+title: List Assets
+description: Retrieve all asset assignment records as a JSON array, ordered by most recent issue date.
 ---
 
-# List Assets API
+Overview
+- Returns a JSON array of asset records from the system, sorted by issued_at in descending order (most recently issued first).
+- Each record includes core details about the asset assignment and timestamps for when it was issued and, if applicable, returned.
 
-This endpoint provides a list of all assets, including detailed information about the asset and the employee to whom it is assigned. The assets are returned in descending order based on the issuance date.
+HTTP Method
+- GET
 
-## HTTP Method
+Endpoint
+- /api/assets
 
-- `GET`
+Function
+- list_assets
 
-## Endpoint Path
-
-- `/api/assets`
-
-## Function Name
-
-- `list_assets`
-
-## Overview
-
-The `list_assets` function retrieves all assets from the database, ordering them by the issuance date in descending order. The assets are returned as a JSON response, including details such as the asset type, model, and associated employee information.
-
-## Path Parameters
-
+Path Parameters
 - None
 
-## Request Body Fields
-
+Request Body
 - None
 
-## Response Fields
+Response
+- Content type: application/json
+- Structure: An array of objects. Each object has the fields below.
 
-The response is a JSON array of objects, each containing the following fields:
+Response Fields
+- id (integer): Unique identifier for the asset record.
+- employee_name (string): Name of the employee the asset is assigned to.
+- employee_email (string): Email of the employee the asset is assigned to.
+- asset_type (string): Type/category of the asset (e.g., laptop, monitor).
+- asset_model (string): Model or specific identifier for the asset.
+- comments (string or null): Optional comments associated with the assignment.
+- issued_at (string): ISO 8601 timestamp when the asset was issued.
+- returned_at (string or null): ISO 8601 timestamp when the asset was returned; null if not yet returned.
 
-- `id` (integer): The unique identifier of the asset.
-- `employee_name` (string): The name of the employee to whom the asset is assigned.
-- `employee_email` (string): The email address of the employee.
-- `asset_type` (string): The type of the asset.
-- `asset_model` (string): The model of the asset.
-- `comments` (string): Any comments associated with the asset.
-- `issued_at` (string): The date and time when the asset was issued, in ISO 8601 format.
-- `returned_at` (string or null): The date and time when the asset was returned, in ISO 8601 format. If the asset has not been returned, this field is `null`.
+Status Codes
+- 200 OK: Successfully retrieved the list of assets.
+- 5xx Server Error: An unexpected server error occurred.
 
-## Status Codes
+Notes
+- If there are no assets, the response is an empty array [].
+- Timestamps are formatted as ISO 8601 strings (for example, 2024-06-01T12:34:56.789123).
 
-- `200 OK`: The request was successful, and the list of assets is returned.
-
-## Sample `curl` Request
-
-To retrieve the list of assets, you can use the following `curl` command:
-
-```
-curl -X GET http://yourapi.com/api/assets
-```
-
-Replace `http://yourapi.com` with the actual base URL of your API. This command will return a JSON array of assets with all the details mentioned above.
+Sample curl
+curl -X GET http://localhost:5000/api/assets

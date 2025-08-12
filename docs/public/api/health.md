@@ -1,36 +1,43 @@
-title: Health Check Endpoint  
-description: A simple endpoint to verify the health status of the API.
+title: Health Check API
+description: Lightweight liveness endpoint that returns a simple JSON payload indicating the service is healthy.
 
-# Health Check Endpoint
+Overview
+The Health Check endpoint provides a quick way to verify that the service is running. It returns a minimal JSON response suitable for uptime monitors, load balancers, and readiness/liveness probes.
 
-## Overview
-The `/health` endpoint is a simple health check mechanism used to verify that the API is running and responsive. It returns a basic status message to confirm the system's operational state.
+- Intended use: Liveness/readiness checks
+- Response format: JSON
 
-## HTTP Method
-- `GET`
+HTTP Method
+- GET
 
-## Endpoint Path
-- `/health`
+Endpoint
+- /health
 
-## Function Name
-- `health`
+Function
+- health
 
-## Path Parameters
+Path Parameters
 - None
 
-## Request Body Fields
+Query Parameters
 - None
 
-## Response Fields
-- `status`: A string indicating the health status. Always returns `"ok"`.
+Request Body
+- None
 
-## Status Codes
-- `200 OK`: The request was successful, and the API is operational.
+Response
+- Content-Type: application/json
+- Body fields:
+  - status (string): The health status of the service. Expected value: "ok".
 
-## Example Request
+Status Codes
+- 200 OK: The service is healthy.
 
-To check the health of the API, you can use the following `curl` command:
+Example Request (curl)
+    curl -sS -X GET https://your-domain.com/health
 
-    curl -X GET http://<your-api-domain>/health
+Example Response
+    HTTP/1.1 200 OK
+    Content-Type: application/json
 
-Replace `<your-api-domain>` with the actual domain where your API is hosted. This request will return a JSON object with the health status and a status code of 200 if the API is healthy.
+    { "status": "ok" }

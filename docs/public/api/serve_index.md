@@ -1,51 +1,38 @@
 ---
-title: Serve Index Route
-description: Documentation for the root endpoint that serves the main index HTML file of the application.
+title: GET / — Serve index.html
+description: Serves the main index.html file from app/static as the application’s homepage.
 ---
 
-# Serve Index Route
+Overview
+This route delivers the application’s main HTML page. It serves the static file app/static/index.html using Flask’s send_from_directory, making it ideal as the landing page or entry point for a single-page application (SPA).
 
-This document provides information about the root endpoint (`/`) of the application, which is responsible for serving the main index HTML file. This is typically used to deliver the main page of a web application to the client.
+- Function: serve_index
+- Behavior: Returns the contents of app/static/index.html
+- Content type: text/html
 
-## Overview
+HTTP Method(s)
+- GET
 
-The root endpoint serves the `index.html` file located in the `app/static` directory. It is commonly used to load the initial page of a web application, allowing users to interact with the client-side interface.
+Endpoint
+- Path: /
 
-## HTTP Method
+Function Name
+- serve_index
 
-- **GET**
+Path Parameters
+- None
 
-## Endpoint Path
+Request Body
+- None
 
-- **/**
+Response
+- Body: HTML content of app/static/index.html
+- Content-Type: text/html
 
-## Function Name
+Status Codes
+- 200 OK: index.html was found and returned.
+- 404 Not Found: index.html does not exist at app/static/index.html.
+- 500 Internal Server Error: An unexpected server error occurred while serving the file.
 
-- **serve_index**
-
-## Path Parameters
-
-There are no path parameters for this endpoint.
-
-## Request Body Fields
-
-This endpoint does not require any request body fields.
-
-## Response Fields
-
-The response consists of the HTML content of the `index.html` file. There are no additional fields or structured data returned.
-
-## Status Codes
-
-- **200 OK**: The request was successful, and the `index.html` file was returned.
-- **404 Not Found**: The requested resource could not be found. This may occur if the `index.html` file is missing from the `app/static` directory.
-
-## Sample Request
-
-Here is an example of how to make a request to this endpoint using `curl`:
-
-```bash
-curl -X GET http://yourdomain.com/
-```
-
-Replace `http://yourdomain.com/` with the actual domain where your application is hosted. This request will return the HTML content of the `index.html` file, typically rendering the main page of your web application in a browser.
+Sample curl
+  curl -i http://localhost:5000/
