@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from app.models import Asset
 from app.extensions import db
 from datetime import datetime, timezone
+from sqlalchemy import func  # NEW
 
 assets_bp = Blueprint('assets', __name__)
 
@@ -25,10 +26,12 @@ def issue_asset():
     db.session.commit()
     return jsonify({"message": "Asset issued", "id": asset.id}), 201
 
-@assets_bp.route('/api/assets', methods=['GET'])
-def list_assets():
-    assets = Asset.query.order_by(Asset.issued_at.desc()).all()
-    return jsonify([{
+# Last dummy change for a dummy commit
+def _asset_json(a: Asset):
+    """Consistent shape incl. derived status/last_updated."""
+    status = "Returned" if a.returned_at else "Issued"
+    last_updated_dt = a.returned_at or a.issued_at
+    return {
         "id": a.id,
         "employee_name": a.employee_name,
         "employee_email": a.employee_email,
@@ -36,8 +39,15 @@ def list_assets():
         "asset_model": a.asset_model,
         "comments": a.comments,
         "issued_at": a.issued_at.isoformat(),
-        "returned_at": a.returned_at.isoformat() if a.returned_at else None
-    } for a in assets])
+        "returned_at": a.returned_at.isoformat() if a.returned_at else None,
+        "status": status,
+        "last_updated": last_updated_dt.isoformat() if last_updated_dt else None,
+    }
+
+@assets_bp.route('/api/assets', methods=['GET'])
+def list_assets():
+    assets = Asset.query.order_by(Asset.issued_at.desc()).all()
+    return jsonify([_asset_json(a) for a in assets])
 
 @assets_bp.route('/api/assets/<int:asset_id>/return', methods=['POST'])
 def return_asset(asset_id):
@@ -67,16 +77,7 @@ def update_asset(asset_id):
         asset.asset_type = data["asset_type"]
 
     db.session.commit()
-    return jsonify({
-        "id": asset.id,
-        "employee_name": asset.employee_name,
-        "employee_email": asset.employee_email,
-        "asset_type": asset.asset_type,
-        "asset_model": asset.asset_model,
-        "comments": asset.comments,
-        "issued_at": asset.issued_at.isoformat(),
-        "returned_at": asset.returned_at.isoformat() if asset.returned_at else None
-    })
+    return jsonify(_asset_json(asset))
 
 @assets_bp.route("/api/device-history/<email>")
 def get_device_history(email):
@@ -94,11 +95,35 @@ def get_device_history(email):
 
 @assets_bp.route('/api/recover', methods=['POST'])
 def recover_service():
-    import subprocess
+    import subprocess, os
     try:
-        import os
         script_path = os.path.join(os.path.dirname(__file__), "../../device_history_service.py")
         subprocess.Popen(["python", script_path])
         return jsonify({"message": "Service recovered"}), 200
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# NEW: filtered/sorted listing that your UI will use
+@assets_bp.route('/api/assets/search', methods=['GET'])
+def search_assets():
+    """
+    Query params:
+      - status: Issued | Returned (optional)
+      - sort: asc | desc (by last_updated = COALESCE(returned_at, issued_at); default=desc)
+    """
+    status = request.args.get("status")  # None | Issued | Returned
+    sort = request.args.get("sort", "desc").lower()
+    sort_desc = (sort != "asc")
+
+    last_updated_expr = func.coalesce(Asset.returned_at, Asset.issued_at)
+
+    q = Asset.query
+    if status == "Issued":
+        q = q.filter(Asset.returned_at.is_(None))
+    elif status == "Returned":
+        q = q.filter(Asset.returned_at.is_not(None))
+
+    q = q.order_by(last_updated_expr.desc() if sort_desc else last_updated_expr.asc())
+
+    assets = q.all()
+    return jsonify([_asset_json(a) for a in assets])
