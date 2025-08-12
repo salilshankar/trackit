@@ -1,10 +1,12 @@
+---
 title: Return an Asset
-description: Mark an asset as returned by setting its returned_at timestamp to the current UTC time.
+description: Mark an asset as returned by setting its returned_at timestamp to the current UTC time and saving the change.
+---
 
 Overview
-This endpoint marks an asset as returned. Internally, it looks up the asset by ID, sets its returned_at timestamp to the current UTC time, and saves the change. A simple confirmation message is returned.
+This endpoint marks an asset as returned. It locates the asset by ID, sets its returned_at field to the current UTC timestamp, commits the change, and returns a confirmation message.
 
-- Function: return_asset
+Note: Repeated calls will update/overwrite the returned_at timestamp to the time of the latest request.
 
 HTTP Method
 - POST
@@ -12,30 +14,28 @@ HTTP Method
 Endpoint
 - /api/assets/{asset_id}/return
 
+Function
+- return_asset
+
 Path Parameters
 - asset_id (integer): The unique identifier of the asset to mark as returned.
 
 Request Body
-- None
+- This endpoint does not accept a request body.
 
 Response
-- 200 OK (application/json)
-  - message (string): Confirmation text. Example: "Asset returned"
+- Content type: application/json
+- Fields:
+  - message (string): Confirmation message. Example: "Asset returned"
 
 Status Codes
-- 200 OK: The asset was successfully marked as returned.
-- 404 Not Found: No asset exists with the given asset_id.
-- 500 Internal Server Error: An unexpected error occurred on the server.
+- 200 OK: Asset was successfully marked as returned.
+- 404 Not Found: No asset exists with the provided asset_id.
 
-Notes
-- The returned_at field is set to the current UTC timestamp.
+Example curl
+curl -X POST "https://your-api.example.com/api/assets/123/return"
 
-Sample curl
-    curl -X POST \
-      -H "Accept: application/json" \
-      https://your-domain.example.com/api/assets/123/return
-
-Example response
-    {
-      "message": "Asset returned"
-    }
+Example Successful Response
+{
+  "message": "Asset returned"
+}

@@ -1,60 +1,65 @@
----
-title: Issue Asset
-description: Create a new asset record issued to an employee and receive the created asset’s ID.
----
+title: Issue an Asset
+description: Create a new asset issuance record for an employee and return the new asset ID.
+
+# POST /api/assets
 
 ## Overview
-Create (issue) a new asset to an employee. On success, the API stores the asset and returns the new asset ID.
+Creates and stores a new asset issuance associated with an employee. The endpoint validates required fields, saves the asset, and returns the newly created asset’s ID.
 
-- HTTP method: POST
-- Endpoint: /api/assets
 - Function: issue_asset
-- Path parameters: None
 
-## Request
-- Content-Type: application/json
+## HTTP Method
+- POST
 
-Fields:
-- employee_name (string, required)
-- employee_email (string, required)
-- asset_type (string, required)
-- asset_model (string, required)
-- comments (string, optional; defaults to an empty string if omitted)
+## Endpoint
+- /api/assets
 
-Validation:
-- If any required field is missing, the request is rejected with HTTP 400 and an error message listing the missing fields.
+## Path Parameters
+- None
+
+## Request Body
+Send a JSON object with the following fields:
+
+- employee_name (string, required) — Employee’s full name.
+- employee_email (string, required) — Employee’s email address.
+- asset_type (string, required) — Type/category of the asset (e.g., laptop, phone).
+- asset_model (string, required) — Model or variant of the asset.
+- comments (string, optional) — Additional notes; defaults to an empty string if not provided.
+
+Notes:
+- The request must contain valid JSON. Although the server forces JSON parsing, malformed JSON will result in a 400 Bad Request.
 
 ## Responses
 
-Success (201 Created):
-- message (string): Confirmation text ("Asset issued").
-- id (number): The database identifier of the newly created asset.
+### 201 Created
+Returns when the asset is successfully created.
 
-Client error (400 Bad Request):
-- error (string): Description of missing fields, e.g., "Missing fields: employee_name, asset_type".
+Body (application/json):
+- message (string) — "Asset issued"
+- id (integer) — The newly created asset’s unique identifier
 
-## Status codes
-- 201 Created: Asset was successfully issued.
-- 400 Bad Request: One or more required fields are missing.
+Example:
+- message: "Asset issued"
+- id: 123
+
+### 400 Bad Request
+Returned when required fields are missing or the JSON is malformed.
+
+Body (application/json):
+- error (string) — Message listing missing fields (e.g., "Missing fields: employee_email, asset_type")
+
+## Status Codes
+- 201 Created — Asset created successfully.
+- 400 Bad Request — Missing required fields or invalid JSON.
 
 ## Sample curl
+
     curl -X POST https://your-domain.example.com/api/assets \
       -H "Content-Type: application/json" \
       -d '{
-        "employee_name": "Alice Doe",
-        "employee_email": "alice@example.com",
-        "asset_type": "Laptop",
-        "asset_model": "MacBook Pro 14",
-        "comments": "Issued on start date"
+        "employee_name": "Jane Doe",
+        "employee_email": "jane.doe@example.com",
+        "asset_type": "laptop",
+        "asset_model": "Dell XPS 13",
+        "comments": "Issued for Q3 project"
       }'
-
-Example success response:
-    {
-      "message": "Asset issued",
-      "id": 123
-    }
-
-Example error response:
-    {
-      "error": "Missing fields: asset_model"
-    }

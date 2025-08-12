@@ -1,75 +1,103 @@
 ---
 title: App
-description: Main screen that centers content and shows an asset issuance form, an assets table, and device history, under a prominent page heading.
+description: Get oriented with the App page that presents an Issue Asset form, an assets table, and a device history section in a simple, centered layout.
 ---
 
-## What this component does
+# App
 
-App lays out the primary workspace for asset management. It displays:
-- A prominent, centered page heading.
-- A form for issuing or registering an asset (IssueAssetForm).
-- A table of assets (AssetTable).
-- A device history section (DeviceHistory).
+The App page brings together three key sections so you can issue assets and review what’s already in your system:
 
-> ℹ️ Info  
-> The content is centered with comfortable spacing and a maximum width for readability.
+- A centered page title (H1)
+- IssueAssetForm
+- AssetTable
+- DeviceHistory
+
+All content is presented in a clean, centered layout with comfortable spacing for readability.
+
+## What you can do here
+
+- Issue a new asset using the IssueAssetForm.
+- View a list of assets in the AssetTable.
+- Review device-related history in DeviceHistory.
 
 ## How to use it
 
-1. Review the page heading at the top to confirm you’re on the right screen.
-2. Use the IssueAssetForm to submit a new asset issuance.
-   - ![Issue asset form](issue-asset-form.png)
-3. Review the AssetTable to see listed assets.
-   - ![Assets table](asset-table.png)
-4. Check DeviceHistory to view related device activity.
+1. Start at the top
+   - You’ll see a centered page title that introduces the page.
+
+2. Issue a new asset
+   - Use the IssueAssetForm section to create/issue a new asset.
+   - Complete the form as prompted by the UI.
+   - When you’re done, submit the form according to the controls provided in that section.
+   - ![Issue Asset form](issue-asset-form.png)
+
+3. Review assets
+   - Check the AssetTable section to see assets listed in a table format.
+   - ![Assets table](assets-table.png)
+
+4. Check device history
+   - Open the DeviceHistory section to review past device activity or records as provided by the UI.
    - ![Device history](device-history.png)
 
-## Layout and appearance
+## Tips
 
-- The page is centered on large screens with a comfortable max width.
-- Generous vertical spacing separates the heading, form, table, and history sections.
-- The heading is large, bold, and centered for clear hierarchy.
+- If the AssetTable or DeviceHistory appears empty, it can mean there are no items to display yet.
+- Use the sections independently—issuing an asset, reviewing assets, and checking device history are presented as distinct parts of the page.
 
-> 📘 Note  
-> Exact field names, table columns, and history details are provided by the IssueAssetForm, AssetTable, and DeviceHistory components themselves and may vary by implementation.
-
-## Mapped API routes
-
-- None are mapped in this component.
+> ℹ️ Info  
+> From the visible JSX:
+> - IssueAssetForm is rendered with a prop `onIssued` set to `true`.  
+> - AssetTable is rendered with a `refresh` prop sourced from an expression.  
+> - No mapped API routes are exposed here.
 
 ---
 title: NotificationBanner
-description: Show an inline red alert with a compact action to trigger a recovery handler.
+description: Display a red alert banner with a message and a single recovery action.
 ---
 
-## What this component does
+# NotificationBanner
 
-NotificationBanner displays a compact, red-styled message with an inline action. Your message appears on the left, and a small, underlined action button sits alongside it. Clicking the action triggers your recovery handler.
+A compact, red-tinted banner for surfacing alerts or failures. It shows your message and provides a small action button to let users attempt recovery.
 
 ![notification banner](notification-banner.png)
 
-- Visual style: red background, red text, small size, rounded corners
-- Layout: single line with the message and action spaced apart
+> ℹ️ Info  
+> This component renders a red alert-style container with your text on the left and a small, underlined action button on the right.
 
-## How to use it
+## What it does
 
-1. Place the component where you want the alert to appear in your UI.
-2. Pass a short, clear message via the `text` prop.
-3. Provide an `onRecover` function to handle clicks on the action button.
+- Shows a red alert banner with rounded corners and small text.
+- Displays your provided message.
+- Includes a right-aligned action button that runs your recovery handler when clicked.
 
-### Props
+Visual details (from styles):
+- Red background with dark red text.
+- Compact padding, small type, and a horizontal layout that spaces message and action apart.
+- Action button appears as a small, underlined red link.
 
-- text: The message shown inside the banner.
-- onRecover: Function called when the action button is clicked.
+## How to use
+
+1. Place the banner where you want to surface an alert to the user.
+2. Pass a text string to describe the issue.
+3. Provide an onRecover function to handle the user’s click on the action button.
+
+Props:
+- text: string — The message shown in the banner.
+- onRecover: function — Called when the action button is clicked.
+
+Example:
+- Set text="We couldn’t complete your request."
+- Set onRecover to a function that attempts your recovery flow.
 
 > 📘 Note  
-> If you don’t supply `onRecover`, the action button won’t perform any action when clicked.
+> The action button’s click handler comes from the onRecover prop. Provide this prop to make the button interactive.
 
-## Tips and behavior
+## Tips
 
-- The action is rendered as a small, underlined red button for emphasis.
-- The banner is compact and intended for inline use above or near relevant content.
-- Spacing and sizing are optimized for brief messages; keep the text concise.
+- Keep the text concise and actionable so users understand what happened.
+- Pair the banner with a clear recovery path via onRecover to help users resolve the issue.
+- This banner uses a compact layout and small text, making it suitable to stack above or below related content.
 
-> ℹ️ Info  
-> This component doesn’t call any API routes directly. It simply invokes your `onRecover` handler when the action button is clicked.
+## API routes
+
+There are no mapped API routes associated with this component.

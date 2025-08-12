@@ -1,37 +1,39 @@
----
-title: GET / — Serve the application index
-description: Returns the main HTML entry point (index.html) from app/static using Flask’s send_from_directory.
----
+title: GET / — Serve index.html
+description: Serves the application’s root HTML file (index.html) from the app/static directory.
 
 Overview
-This route serves the main index.html file for the web application. It is typically used as the entry point for a client-side app (e.g., a Single Page Application). The file is read from the app/static directory and returned as an HTML response.
+This route serves the main HTML page of the application. When a client accesses the root path (/), the server responds with the index.html file located in app/static. This is commonly used to deliver the entry point for a single-page application (SPA) or the main landing page.
 
-- Served file: app/static/index.html
-- Implementation: Flask send_from_directory
+- Function: serve_index
+- Implementation detail: Internally uses Flask’s send_from_directory to return app/static/index.html.
 
 HTTP Method(s)
 - GET
 
-Endpoint Path
-- /
-
-Function
-- serve_index
+Endpoint
+- Path: /
 
 Path Parameters
+- None
+
+Query Parameters
 - None
 
 Request Body
 - None
 
 Response
-- Body: Contents of app/static/index.html
-- Content-Type: text/html; charset=utf-8 (inferred from file type)
+- Content: The contents of app/static/index.html
+- Content-Type: text/html; charset=utf-8 (typical)
 
 Status Codes
-- 200 OK — index.html was found and returned successfully.
-- 404 Not Found — index.html does not exist in app/static.
-- 500 Internal Server Error — An unexpected error occurred while attempting to serve the file.
+- 200 OK: index.html was found and returned successfully.
+- 404 Not Found: index.html could not be found at app/static/index.html.
+- 500 Internal Server Error: An unexpected server error occurred while attempting to serve the file.
 
-Sample curl
-    curl -i -X GET http://localhost:5000/ -H "Accept: text/html"
+Sample curl Request
+    curl -i http://localhost:5000/
+
+Notes
+- The served file must exist at app/static/index.html relative to the application root.
+- If you are deploying behind a proxy or serving a frontend build, ensure the index.html and related assets are present in app/static.
