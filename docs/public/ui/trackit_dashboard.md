@@ -1,106 +1,156 @@
 ---
-title: AssetTable Component
-description: Learn how to use the AssetTable component to display asset data in a structured table format.
+title: DeviceHistory
+description: Enter an employee email, submit the request, and handle errors with a built-in recovery action.
 ---
 
-# AssetTable Component
+## What this component does
 
-The `AssetTable` component is designed to display a list of assets in a clean, organized table format. This component provides a straightforward way to view asset information with a user-friendly interface.
+DeviceHistory presents a simple, card-style interface where you:
+- Enter an employee email address.
+- Click a primary action button beside the input.
+- See any error message in a notification banner that also offers a recovery action.
+- Read additional small-print details below the form (with emphasized labels).
 
-## How to Use the AssetTable
+![Device history form](device-history-form.png)
 
-1. **Display the Table**: The `AssetTable` automatically renders a table with a white background, padding, and a shadow for a polished look. The table includes a header and rows for asset data.
+> ℹ️ Info  
+> The layout places the input and button side-by-side in a compact row. Content is presented in a clean, white card with a title at the top.
 
-2. **Table Structure**:
-   - The table header (`<thead>`) is styled with a light gray background to distinguish it from the data rows.
-   - Each column header (`<th>`) is left-aligned with padding for readability.
-   - Asset data is displayed in rows (`<tr>`) with a border-top to separate each entry.
+## How to use it
 
-3. **Interacting with Data**:
-   - Each row of data is clickable, allowing for potential interaction or selection.
-   - The component does not explicitly provide buttons or controls for refreshing data, but it does support a `refresh` prop for potential data updates.
+1. Find the Employee Email field.
+2. Type the employee’s email address.
+3. Click the primary button next to the input to submit your request.
+4. If a notification banner appears with an error message, use its recovery action to proceed.
+5. Review the details displayed in the small-print section below the form.
 
-## Tips
+![Error banner with recovery](recovery-banner.png)
 
-- Ensure that the asset data is correctly formatted and available to be displayed in the table.
-- The component is styled to be responsive and should fit within most standard layouts.
+> 📘 Note  
+> The notification banner displays error text when available and includes a recovery action you can trigger.
 
-> 📘 **Note**: The `AssetTable` fetches asset data using a `GET` request to the `/api/assets` endpoint. Ensure your API is configured to handle this request and return data in the expected format.
+## Tips and details
 
-By following these instructions, you can effectively utilize the `AssetTable` component to present asset data in a structured and visually appealing manner.
+- Field: The input uses the placeholder “Employee Email” to guide what to enter.
+- Action button: Styled as the primary call-to-action next to the input.
+- Additional info: Below the form, small text with emphasized labels provides further context or results.
 
----
-title: DeviceHistory Component
-description: Learn how to use the DeviceHistory component to view and manage device history.
----
+> ℹ️ Info  
+> No external props are required to render this component.
 
-## What the DeviceHistory Component Does
+## Related API route
 
-The `DeviceHistory` component allows you to view the history of devices associated with an employee. By entering an employee's email, you can fetch and display their device history. This component also handles errors and provides a way to recover from them.
-
-## How to Use the DeviceHistory Component
-
-1. **Enter Employee Email**:  
-   In the input field labeled "Employee Email", type the email address of the employee whose device history you wish to view.
-
-   ![Enter employee email](enter-email.png)
-
-2. **Fetch Device History**:  
-   Click the button styled with a blue background and white text to fetch the device history for the entered email. This action will trigger the retrieval of device data.
-
-   ![Fetch device history](fetch-history.png)
-
-3. **View Notifications**:  
-   If there is an error during the fetching process, a notification banner will appear displaying the error message. You can attempt to recover from the error using the provided recovery option.
-
-   ![Error notification](error-notification.png)
-
-## Tips and Additional Information
-
-- **Input Validation**: Ensure that the email entered is valid to successfully fetch the device history.
-- **Error Handling**: The component includes a `NotificationBanner` that displays error messages and provides a recovery option if something goes wrong.
-- **Styling**: The component is styled with a clean, modern look using white backgrounds and blue accents for action elements.
-
-> 📘 **Note**: The component interacts with the `/api/recover` endpoint via a POST request to handle recovery actions when errors occur.
-
-By following these steps, you can effectively use the `DeviceHistory` component to manage and view device history associated with employees.
+- POST /api/recover  
+  Used by the recovery action exposed in the notification banner.
 
 ---
-title: IssueAssetForm Component
-description: Learn how to use the IssueAssetForm component to issue new assets efficiently.
+title: IssueAssetForm
+description: Let users select an asset type and submit a request to issue an asset.
 ---
 
-## What the Component Does
+## What this component does
 
-The `IssueAssetForm` component allows you to issue new assets by selecting an asset type and submitting the form. It provides a user-friendly interface to facilitate the asset issuance process.
+IssueAssetForm renders a simple form that lets a user choose an asset type from a dropdown and submit the selection. The form appears as a white, padded card with a rounded, shadowed container and a clear heading.
 
-## How to Use the IssueAssetForm
+Available asset types:
+- Laptop
+- Monitor
+- Keyboard
+- Mouse
+- Phone
+- Tablet
+- Other
 
-1. **Open the Form**: Access the form where you want to issue a new asset.
+> ℹ️ Info  
+> The asset type field is required.
 
-2. **Select Asset Type**:
-   - Use the dropdown menu to select the type of asset you wish to issue. Options include:
-     - Laptop
-     - Monitor
-     - Keyboard
-     - Mouse
-     - Phone
-     - Tablet
-     - Other
+![submit form](submit-form.png)
 
-   ![select asset type](select-asset-type.png)
+## How to use it
 
-3. **Submit the Form**:
-   - Once you've selected the asset type, click the **Submit** button to issue the asset.
-   - The submit button is styled with a blue background and white text for easy identification.
+1. Open the form.
+2. Choose an option from the Asset type dropdown.
+   - The dropdown includes a blank option at the top; pick one of the listed asset types before submitting.
+3. Select the submit button to send your request.
 
-   ![submit form](submit-form.png)
+![select asset type](select-asset-type.png)
 
-   > 📘 **Note**: The submit button will be disabled if the form is in a loading state, ensuring that you do not submit the form multiple times accidentally.
+## Tips and validations
 
-## Additional Information
+- The Asset type field is marked as required. If left blank, the browser will prevent submission until a value is selected.
+- The submit button may be disabled depending on application state (for example, while a submission is in progress).
 
-- **Form Styling**: The form is styled with a white background, padding, and a shadow for better visual separation.
-- **API Interaction**: On submission, the form sends a `POST` request to the `/api/assets` endpoint to process the asset issuance.
+## API behavior
 
-> ℹ️ **Info**: Ensure that all required fields are filled out to successfully submit the form. The asset type selection is mandatory.
+Submitting the form is mapped to the following API route:
+- POST /api/assets
+
+> 📘 Note  
+> The specific request payload and response details are not visible in this component’s JSX. Only the mapped route is known from the integration.
+
+## Props
+
+- onIssued (optional): A callback prop you can provide from your app to handle post-issue behavior. The component exposes the prop, but invocation timing and payload are not shown in the JSX.
+
+---
+title: AssetTable
+description: Display a list of assets in a styled table with per-row inputs, comments, and action buttons. Data is sourced from GET /api/assets.
+---
+
+## What this component does
+
+AssetTable renders a card-style section with a header and a full-width, bordered table. The table includes:
+- A header row (light gray background) with multiple left-aligned column headers.
+- Data rows, each with padded cells.
+- Inline fields per row:
+  - A bordered text input (compact width) for a model-like value.
+  - A bordered, multiline textarea for comments.
+  - A read-only text block that preserves line breaks and spacing (whitespace-pre-wrap).
+- A primary action button per row (blue, rounded). This button can be disabled and shows reduced opacity when disabled.
+- A secondary text-style button per row (gray, underlined).
+
+> 📘 Note  
+> The header text, column labels, and button labels are defined by your implementation and may vary. The component’s styles indicate roles (e.g., “primary” vs. “secondary” action) without prescribing specific labels.
+
+![asset table](asset-table.png)
+
+## How to use it
+
+1. Add the component to your page where you want to list assets.
+2. Make sure your backend exposes the assets endpoint at /api/assets.
+3. Interact with rows as needed:
+   - Type in the text input to update a model-like field.
+   - Use the multiline field to add or edit comments.
+   - Use the blue button to perform the primary action for that row. If it’s disabled, it appears semi-transparent.
+   - Use the underlined gray button for the secondary action for that row.
+
+![editing a row](asset-row-edit.png)
+
+> ℹ️ Info  
+> Comments rendered in the read-only view preserve line breaks and spacing. This helps longer notes remain readable.
+
+## Props
+
+- refresh  
+  Exposes a refresh prop on the component for parent-level integration. Your app can supply this prop as needed.
+
+> 📘 Note  
+> The component does not include a built-in “Refresh” button. If you need a visible refresh control, add it in the parent and wire it to your data flow.
+
+## Styles and layout details
+
+- Container: white background, padding, rounded corners, shadow.
+- Table: full width, small text, bordered.
+- Header cells: left-aligned with padding; header row uses a light gray background.
+- Body rows: top-aligned with a subtle top border.
+- Inputs: compact widths with borders and rounded corners (a text input and a multiline textarea).
+- Read-only text: uses whitespace-preserving formatting (line breaks and spacing are kept).
+- Actions: blue primary button (rounded, disabled state supported) and a gray underlined secondary button.
+
+## API mapping
+
+- GET /api/assets  
+  Used to retrieve the list of assets displayed in the table.
+
+> ℹ️ Info  
+> Ensure your API returns data in the shape your table rows expect. The component relies on the assets returned by this route to populate its rows.

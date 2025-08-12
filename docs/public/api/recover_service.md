@@ -1,54 +1,62 @@
-title: Recover Service API
-description: API endpoint to recover a service by executing a specific script.
+---
+title: Recover Service
+description: Starts the device history service by launching device_history_service.py in a new subprocess and returns immediately with the outcome.
+---
 
-# Recover Service API
+Overview
+This endpoint attempts to recover or restart a background service by spawning the device_history_service.py script as a new process. It responds immediately after initiating the subprocess and does not wait for the script to complete.
 
-## Overview
+- The script path is resolved relative to the server code location: ../../device_history_service.py.
+- The subprocess is launched using the system's python executable via subprocess.Popen.
 
-The Recover Service API provides an endpoint to initiate the recovery of a service by executing a predefined script on the server. This endpoint is useful for scenarios where automated service recovery is needed.
+HTTP Method
+- POST
 
-## HTTP Method
+Endpoint
+- /api/recover
 
-- **POST**
+Function
+- recover_service
 
-## Endpoint Path
-
-- `/api/recover`
-
-## Function Name
-
-- `recover_service`
-
-## Path Parameters
-
+Path Parameters
 - None
 
-## Request Body Fields
-
+Query Parameters
 - None
 
-## Response Fields
+Request Body
+- None
 
-- **message**: A string indicating the success of the service recovery.
-- **error**: A string containing error details if the recovery fails.
+Responses
+- 200 OK
+  - Content-Type: application/json
+  - Body:
+    - message (string): Confirmation that the recovery process was initiated.
+      - Example: "Service recovered"
+- 500 Internal Server Error
+  - Content-Type: application/json
+  - Body:
+    - error (string): Error message describing what went wrong when attempting to start the subprocess.
 
-## Status Codes
+Status Codes
+- 200: Subprocess successfully spawned.
+- 500: Failed to spawn the subprocess (e.g., missing script, permissions, environment/path issues).
 
-- **200 OK**: The service was successfully recovered.
-- **500 Internal Server Error**: An error occurred during the recovery process.
+Notes
+- The operation is non-blocking; it does not verify that the launched service remains running or becomes healthy.
+- Each call will attempt to start a new instance of the script. Ensure your environment or supervisor handles duplicates appropriately.
+- The server must have permission to execute Python and access the target script at the resolved path.
 
-## Sample `curl` Request
+Sample curl
+    curl -X POST https://your-domain.example.com/api/recover
 
-To use the Recover Service API, you can execute the following `curl` command:
+Example Responses
+- Success (200):
+  {
+    "message": "Service recovered"
+  }
 
-```
-curl -X POST http://yourserver.com/api/recover
-```
-
-Replace `http://yourserver.com` with the actual server URL where the API is hosted.
-
-## Additional Notes
-
-- This endpoint is designed to execute a script located at `../../device_history_service.py` relative to the server's file structure.
-- Make sure the server has the necessary permissions to execute scripts and that the script path is correct for your deployment environment.
-- No authentication or additional headers are required for this endpoint, but you may want to secure it depending on your use case.
+- Error (500):
+  {
+    "error": "Detailed error message"
+  }

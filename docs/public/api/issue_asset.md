@@ -1,60 +1,66 @@
----
-title: Issue Asset API
-description: API endpoint for issuing a new asset to an employee.
----
+title: Issue Asset
+description: Create a new asset record and assign it to an employee. Returns the new asset’s ID on success.
 
-## Overview
+Overview
+Create and record the issuance of an asset to an employee. On success, a new asset entry is persisted and the API returns the asset’s database ID.
 
-The `Issue Asset API` allows you to issue a new asset to an employee. This endpoint is part of the asset management system and is used to create a record of an asset being assigned to an employee, including details such as the employee's name and email, asset type, and model. If required fields are missing, the API will return an error indicating which fields are missing.
+HTTP Method
+- POST
 
-## HTTP Method
+Endpoint
+- /api/assets
 
-- `POST`
+Function
+- issue_asset
 
-## Endpoint Path
+Path Parameters
+- None
 
-- `/api/assets`
+Request Body
+- Content type: application/json
 
-## Function Name
+Fields:
+- employee_name (string, required): Name of the employee receiving the asset.
+- employee_email (string, required): Email address of the employee.
+- asset_type (string, required): Category or type of the asset (e.g., "laptop", "phone").
+- asset_model (string, required): Model or specific identifier of the asset (e.g., "Dell XPS 13").
+- comments (string, optional): Additional notes about the issuance. Defaults to an empty string if omitted.
 
-- `issue_asset`
+Notes:
+- If any required field is missing, the request fails with a 400 status and an error message listing the missing fields.
+- Additional, unknown fields in the request body are ignored.
 
-## Request Body Fields
+Response
+Success (201 Created):
+- message (string): Confirmation message ("Asset issued").
+- id (integer): The newly created asset’s identifier.
 
-The request body must be in JSON format and include the following fields:
+Error (400 Bad Request):
+- error (string): Description listing the missing required fields.
 
-- `employee_name` (string): The name of the employee receiving the asset.
-- `employee_email` (string): The email address of the employee.
-- `asset_type` (string): The type of asset being issued.
-- `asset_model` (string): The model of the asset being issued.
-- `comments` (string, optional): Additional comments about the asset issuance. Defaults to an empty string if not provided.
+Status Codes
+- 201 Created: Asset was successfully issued.
+- 400 Bad Request: One or more required fields are missing.
+- 5xx Server Error: An unexpected error occurred on the server (not explicitly handled in this route, but may occur).
 
-## Response Fields
+Example curl
+    curl -X POST https://your-domain.example.com/api/assets \
+      -H "Content-Type: application/json" \
+      -d '{
+        "employee_name": "Avery Kim",
+        "employee_email": "avery.kim@example.com",
+        "asset_type": "laptop",
+        "asset_model": "Lenovo T14",
+        "comments": "Issued as part of onboarding"
+      }'
 
-The response is returned in JSON format and includes the following fields:
+Example success response (201)
+    {
+      "message": "Asset issued",
+      "id": 123
+    }
 
-- `message` (string): A message indicating the outcome of the operation, e.g., "Asset issued".
-- `id` (integer): The unique identifier of the newly created asset record.
-
-## Status Codes
-
-- `201 Created`: The asset has been successfully issued.
-- `400 Bad Request`: One or more required fields are missing from the request.
-
-## Sample `curl` Request
-
-To issue a new asset, you can use the following `curl` command:
-
-```
-curl -X POST http://<your-domain>/api/assets \
--H "Content-Type: application/json" \
--d '{
-  "employee_name": "John Doe",
-  "employee_email": "john.doe@example.com",
-  "asset_type": "Laptop",
-  "asset_model": "Dell XPS 13",
-  "comments": "Urgent requirement"
-}'
-```
-
-Replace `<your-domain>` with your actual API domain. This command will issue a new asset to the employee specified in the request body. If successful, it will return a JSON response with a message and the asset ID.
+Example error response (400)
+    {
+      "error": "Missing fields: asset_model, employee_email"
+    }

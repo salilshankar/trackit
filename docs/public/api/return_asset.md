@@ -1,45 +1,42 @@
-title: Return Asset API
-description: Endpoint to mark an asset as returned in the system.
+---
+title: Return Asset
+description: Mark an asset as returned by setting its returned_at timestamp to the current UTC time.
+---
 
-## Overview
+Overview
+Use this endpoint to mark an existing asset as returned. When invoked, the server sets the asset’s returned_at field to the current UTC timestamp and persists the change.
 
-The Return Asset API allows you to mark an asset as returned. This is useful for managing asset tracking within your system, ensuring that the status of each asset is kept up to date. When an asset is returned, the system records the current UTC time as the return time.
+- Side effect: Updates the asset’s returned_at to the current UTC time.
+- Repeated calls: Each call will update/overwrite returned_at to the time of the call.
 
-## HTTP Method
+HTTP Method
+- POST
 
-- `POST`
+Endpoint
+- /api/assets/{asset_id}/return
 
-## Endpoint Path
+Function
+- return_asset
 
-- `/api/assets/{asset_id}/return`
+Path Parameters
+- asset_id (integer): The unique identifier of the asset to return.
 
-## Function Name
+Request Body
+- None. This endpoint does not accept a request body.
 
-- `return_asset`
+Response
+- 200 OK: JSON object
+  - message (string): Confirmation message.
 
-## Path Parameters
+Status Codes
+- 200 OK: Asset was successfully marked as returned.
+- 404 Not Found: No asset exists with the provided asset_id.
 
-- `asset_id` (integer): The unique identifier of the asset to be marked as returned.
+Sample curl
+    curl -X POST "https://your-domain.example.com/api/assets/123/return" \
+      -H "Accept: application/json"
 
-## Request Body Fields
-
-- None. This endpoint does not require a request body.
-
-## Response Fields
-
-- **message** (string): A confirmation message indicating the asset has been successfully returned.
-
-## Status Codes
-
-- `200 OK`: The asset was successfully marked as returned.
-- `404 Not Found`: The asset with the specified `asset_id` does not exist.
-
-## Sample `curl` Request
-
-To mark an asset as returned, you can use the following `curl` command, replacing `{asset_id}` with the actual ID of the asset:
-
-```
-curl -X POST http://yourapi.com/api/assets/{asset_id}/return
-```
-
-This endpoint is part of the asset management functionality, making it easier to keep track of assets within your organization. Use it to ensure that the return status is updated as assets are returned.
+Example successful response
+    {
+      "message": "Asset returned"
+    }
