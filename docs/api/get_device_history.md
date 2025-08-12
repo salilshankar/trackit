@@ -1,46 +1,33 @@
-title: GET /api/device-history/{email}
-description: Retrieve a user’s device history by email. This endpoint proxies to an internal device-history service and returns that service’s JSON response.
+title: Get device history by email
+description: Retrieve a user’s device history by email. Proxies the request to a local device-history service and returns its JSON response.
 
-# GET /api/device-history/{email}
+Overview
+This endpoint fetches device history associated with a given email address. It acts as a thin proxy to an internal device-history service over a TCP socket (localhost:9002). The email is forwarded to that service, and whatever JSON it returns is passed back to the client.
 
-## Overview
-Fetch the device history for a user identified by their email address. This endpoint acts as a thin proxy to an internal device-history service and returns whatever JSON payload that service provides. If the internal service is unavailable, a standardized error response is returned.
-
+Details
+- HTTP method: GET
+- Endpoint: /api/device-history/{email}
 - Function: get_device_history
-
-## HTTP Method
-- GET
-
-## Endpoint
-- Path: /api/device-history/{email}
-
-## Path Parameters
-- email (string, required): The user’s email address. URL-encode special characters when placing the email in the path (for example, use user%40example.com for user@example.com).
-
-## Request Body
-- None. This endpoint does not accept a request body.
-
-## Response
 - Content type: application/json
-- Success (200): Pass-through JSON from the internal device-history service. The exact schema is determined by that service.
-- Error (500): JSON object with an error message when the internal service is unavailable.
-  - error (string): A descriptive error message. Example: "device-history-service unavailable"
 
-## Status Codes
-- 200 OK: The device history was retrieved successfully.
-- 500 Internal Server Error: The internal device-history service could not be reached or returned an error.
+Path parameters
+- email (string, required): The user’s email address. URL-encode as needed when used in the path (for example, alice%40example.com).
 
-## Example
-Sample curl request using a URL-encoded email:
+Request body
+- None.
 
-    curl -sS -X GET "https://your-api.example.com/api/device-history/user%40example.com" \
-      -H "Accept: application/json"
+Response
+- Success: Returns JSON exactly as provided by the device-history service. The schema is not enforced by this API and may vary depending on the upstream service.
+- Error: Returns a JSON object on failure.
+  - error (string): A message indicating the upstream service is unavailable. Example: {"error":"device-history-service unavailable"}
 
-Error response example (500):
+Status codes
+- 200 OK: The upstream device-history service responded and its JSON payload was returned.
+- 500 Internal Server Error: The upstream device-history service was unavailable or a connection error occurred.
 
-    {
-      "error": "device-history-service unavailable"
-    }
+Notes
+- This endpoint proxies to a local TCP service at localhost:9002.
+- Current implementation reads up to 4096 bytes from the upstream response. Very large payloads may be truncated.
 
-## Notes
-- This endpoint proxies to an internal service over a local socket; the response schema may change based on that service. Consult the internal device-history service documentation for field definitions.
+Sample curl
+curl -X GET 'https://your-server.example.com/api/device-history/alice%40example.com' -H 'Accept: application/json'

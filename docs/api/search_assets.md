@@ -1,48 +1,59 @@
+---
 title: Search Assets
-description: Retrieve a list of assets filtered by status and sorted by most recent activity (issued or returned date).
+description: Retrieve a list of assets, optionally filtered by status and sorted by their most recent update time.
+---
 
-Overview
-Use this endpoint to search assets with optional filtering by status and sorting by most recent activity. Results are ordered by last_updated, which is computed as returned_at if present, otherwise issued_at.
+# GET /api/assets/search
 
-- HTTP Method: GET
-- Endpoint: /api/assets/search
-- Function: search_assets
+## Overview
+Returns a JSON array of assets. You can optionally filter by asset status (Issued or Returned) and control the sort order. Sorting is based on the most recent lifecycle change, defined as:
+- last_updated = COALESCE(returned_at, issued_at)
 
-Path Parameters
+If a status is provided:
+- Issued: assets with no returned_at timestamp
+- Returned: assets with a non-null returned_at timestamp
+
+## Method
+- GET
+
+## Endpoint
+- /api/assets/search
+
+## Handler
+- Function: `search_assets`
+
+## Path parameters
 - None
 
-Query Parameters
+## Query parameters
 - status (string, optional)
-  - Allowed values: Issued | Returned
-  - Behavior:
-    - Issued returns assets where returned_at is null (currently issued).
-    - Returned returns assets where returned_at is not null.
-    - If omitted, returns all assets regardless of status.
-  - Note: This value is case-sensitive (must match exactly Issued or Returned).
-
+  - Allowed: `Issued` | `Returned`
+  - Case-sensitive. If omitted or any other value is provided, no status filter is applied.
 - sort (string, optional)
-  - Allowed values: asc | desc
-  - Default: desc
-  - Case-insensitive.
-  - Sorts by last_updated, where last_updated = COALESCE(returned_at, issued_at).
-  - Any value other than asc is treated as descending.
+  - Allowed: `asc` | `desc` (case-insensitive)
+  - Sorts by last_updated = COALESCE(returned_at, issued_at)
+  - Default: `desc`
+  - Any value other than `asc` results in descending order.
 
-Request Body
+## Request body
 - None
 
-Response
+## Response
 - 200 OK: JSON array of asset objects.
-  - The exact fields are those produced by the server’s internal _asset_json serializer for each asset.
-  - Shape: an array where each item is an object representing an asset.
+  - The shape of each asset object is determined by the server’s internal `_asset_json` representation.
 
-Status Codes
-- 200 OK: The request succeeded and a list of assets is returned.
+## Status codes
+- 200 OK: Successful retrieval.
 - 500 Internal Server Error: An unexpected error occurred on the server.
 
-Notes
-- There is no pagination on this endpoint.
-- Sorting defaults to most recent activity first (desc).
+## Notes
+- Status matching is case-sensitive (`Issued`, `Returned`).
+- Sorting is case-insensitive and defaults to descending unless `asc` is explicitly provided.
 
-Sample curl
-- Retrieve returned assets, sorted by oldest activity first:
-  - curl -X GET "https://your-domain.example.com/api/assets/search?status=Returned&sort=asc"
+## Examples
+
+- Get issued assets in ascending order by last_updated:
+  - curl -G "http://localhost:5000/api/assets/search" --data-urlencode "status=Issued" --data-urlencode "sort=asc"
+
+- Get all assets (no status filter) in default descending order:
+  - curl -G "http://localhost:5000/api/assets/search"

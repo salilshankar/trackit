@@ -1,34 +1,40 @@
-title: GET /api/assets — List Assets
-description: Retrieve all assets as a JSON array, ordered by most recent issuance time.
+title: List Assets
+description: Retrieve all assets as a JSON array, ordered from newest to oldest by issuance time.
 
 Overview
-Returns the full list of assets as JSON. The results are ordered by the asset issuance timestamp in descending order (most recent first).
+The List Assets endpoint returns all assets in the system as a JSON array. Results are ordered by the asset’s issued_at timestamp in descending order (newest first). This endpoint is not paginated and does not accept filters or query parameters.
 
-- HTTP method: GET
-- Endpoint: /api/assets
-- Function: list_assets
+- Content type: application/json
 
-Path parameters
+HTTP Method
+- GET
+
+Endpoint
+- /api/assets
+
+Function
+- list_assets
+
+Path Parameters
 - None
 
-Query parameters
+Query Parameters
 - None
 
-Request body
+Request Body
 - None
-
-Request headers
-- Accept: application/json (optional)
 
 Response
-- Content type: application/json
-- Body: JSON array of asset objects.
-  - Each item is an object representing an asset as produced by the internal serializer (_asset_json).
-  - Ordering: descending by the asset’s issued_at timestamp (most recent first).
+- Type: JSON array
+- Items: Asset objects, each serialized by the server’s internal _asset_json helper. The exact fields are defined by the server; clients should treat each item as an object representing an asset.
+- Ordering: Descending by issued_at (newest first)
+- Empty result: Returns an empty array [] if there are no assets
 
-Status codes
-- 200 OK: The list of assets was returned successfully.
-- 500 Internal Server Error: An unexpected error occurred on the server.
+Status Codes
+- 200 OK: Assets returned successfully
+- 405 Method Not Allowed: If a non-GET method is used
+- 500 Internal Server Error: Unexpected server error
 
 Sample curl
-curl -H "Accept: application/json" http://localhost:5000/api/assets
+curl -X GET "http://localhost:5000/api/assets" \
+  -H "Accept: application/json"

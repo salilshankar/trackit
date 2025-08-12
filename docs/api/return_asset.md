@@ -1,12 +1,12 @@
-title: Return an asset
-description: Mark an asset as returned by setting its returned_at timestamp and saving the change.
+title: Return an Asset
+description: Mark an asset as returned by setting its returned_at timestamp and committing the change.
 
 Overview
-This endpoint marks an asset as returned. It looks up the asset by ID, sets its returned_at to the current UTC timestamp, commits the change, and returns a confirmation message.
+This endpoint marks an asset as returned. It updates the asset’s returned_at timestamp to the current UTC time and commits the change. A simple confirmation message is returned on success.
 
-- Note: Each call updates the returned_at timestamp to the current time.
+- Note: If called multiple times for the same asset, the returned_at timestamp is overwritten with the new current time.
 
-HTTP method
+HTTP Method
 - POST
 
 Endpoint
@@ -15,21 +15,28 @@ Endpoint
 Function
 - return_asset
 
-Path parameters
-- asset_id (integer, required): The unique identifier of the asset to mark as returned.
+Path Parameters
+- asset_id (integer): The unique ID of the asset to mark as returned.
 
-Request body
+Request Body
 - None
 
 Response
-- message (string): Confirmation message, e.g., "Asset returned"
+Fields:
+- message (string)
 
-Status codes
+Example success body:
+    {
+      "message": "Asset returned"
+    }
+
+Status Codes
 - 200 OK: Asset was successfully marked as returned.
 - 404 Not Found: No asset exists with the provided asset_id.
+- 405 Method Not Allowed: The HTTP method is not supported for this endpoint.
 - 500 Internal Server Error: An unexpected error occurred on the server.
 
 Example curl
     curl -X POST \
       -H "Accept: application/json" \
-      http://localhost:5000/api/assets/123/return
+      https://your-domain.example.com/api/assets/123/return
