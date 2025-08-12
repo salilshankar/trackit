@@ -46,6 +46,38 @@ def return_asset(asset_id):
     db.session.commit()
     return jsonify({"message": "Asset returned"})
 
+@assets_bp.route('/api/assets/<int:asset_id>', methods=['PUT', 'PATCH'])
+def update_asset(asset_id):
+    """
+    Update mutable fields of an asset.
+    Accepted JSON keys: comments, asset_model, asset_type
+    """
+    asset = Asset.query.get_or_404(asset_id)
+    data = request.get_json(force=True) or {}
+
+    allowed = {"comments", "asset_model", "asset_type"}
+    if not any(k in data for k in allowed):
+        return jsonify({"error": "No updatable fields provided"}), 400
+
+    if "comments" in data:
+        asset.comments = data["comments"]
+    if "asset_model" in data:
+        asset.asset_model = data["asset_model"]
+    if "asset_type" in data:
+        asset.asset_type = data["asset_type"]
+
+    db.session.commit()
+    return jsonify({
+        "id": asset.id,
+        "employee_name": asset.employee_name,
+        "employee_email": asset.employee_email,
+        "asset_type": asset.asset_type,
+        "asset_model": asset.asset_model,
+        "comments": asset.comments,
+        "issued_at": asset.issued_at.isoformat(),
+        "returned_at": asset.returned_at.isoformat() if asset.returned_at else None
+    })
+
 @assets_bp.route("/api/device-history/<email>")
 def get_device_history(email):
     import socket, json
