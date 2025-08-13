@@ -26,7 +26,6 @@ def issue_asset():
     db.session.commit()
     return jsonify({"message": "Asset issued", "id": asset.id}), 201
 
-# Last dummy change for a dummy commit
 def _asset_json(a: Asset):
     """Consistent shape incl. derived status/last_updated."""
     status = "Returned" if a.returned_at else "Issued"
