@@ -1,10 +1,12 @@
-title: GET /api/device-history/{email}
-description: Retrieve device history for a user by email. This endpoint proxies the request to a local device-history TCP service and returns its JSON response.
+---
+title: Get Device History by Email
+description: Retrieves a user's device history by email, proxying the request to the device-history service and returning its JSON response.
+---
 
 Overview
-This endpoint fetches device history for a given user email. It acts as a thin proxy: the server opens a raw TCP socket to a local device-history service (localhost:9002), sends the email, waits for a JSON response (up to 4096 bytes), and returns that JSON to the client. If the local service is unavailable or an error occurs, a 500 error is returned.
+This endpoint fetches device history associated with a given user email. It acts as a thin proxy to an internal device-history service running on localhost:9002, returning that service’s JSON response directly to the client.
 
-HTTP method
+HTTP Method
 - GET
 
 Endpoint
@@ -13,29 +15,26 @@ Endpoint
 Function
 - get_device_history
 
-Path parameters
-- email (string, required): The user’s email address to query. URL-encode reserved characters (e.g., @ as %40).
+Path Parameters
+- email (string, required): The user's email address. Must be URL-encoded when included in the path (for example, user%40example.com).
 
-Request body
+Request Body
 - None
 
 Response
-- Content type: application/json
-- Success (200): The JSON body is passed through from the device-history service. The structure depends on that upstream service.
-- Error (500): Returns a JSON error object:
-  - error (string): Always "device-history-service unavailable" when the upstream service cannot be reached or an error occurs.
+- Success (200): Pass-through JSON from the device-history service. The structure is not modified by this endpoint and may be an object or array, depending on the upstream service.
+- Error (500): JSON object with an error message when the device-history service is unavailable.
+  - error (string): A description of the error. Example: "device-history-service unavailable"
 
-Status codes
-- 200 OK: Successfully retrieved JSON from the device-history service.
-- 500 Internal Server Error: The device-history service is unavailable or an internal error occurred while contacting it.
-  - Body: {"error":"device-history-service unavailable"}
+Status Codes
+- 200 OK: Device history retrieved successfully.
+- 500 Internal Server Error: The device-history service could not be reached or returned an invalid response.
+
+Notes
+- The response body is forwarded from the device-history service without modification.
+- Only the first 4096 bytes of the upstream response are read; larger responses may be truncated.
+- Response Content-Type: application/json
 
 Sample curl
-    curl -sS -X GET 'https://your-api-host.example.com/api/device-history/user%40example.com' \
-      -H 'Accept: application/json'
-
-Notes and limitations
-- Backend dependency: Requires a local TCP service running on localhost:9002 that accepts a UTF-8–encoded email and returns a JSON document.
-- Payload size: The implementation reads a single TCP frame of up to 4096 bytes; larger responses may be truncated.
-- Timeouts: No explicit socket timeout is set; requests may hang if the upstream service does not respond.
-- Encoding: The email is sent to the TCP service as UTF-8 bytes without additional framing or delimiters; the upstream service must handle this protocol.
+curl -X GET "https://your-api.example.com/api/device-history/user%40example.com" \
+  -H "Accept: application/json"
