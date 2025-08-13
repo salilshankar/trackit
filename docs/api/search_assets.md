@@ -1,66 +1,53 @@
----
 title: Search Assets
-description: Retrieve a JSON list of assets filtered by issued/returned status and sorted by most recent activity (issued or returned).
----
+description: Retrieve assets filtered by issuance status and sorted by their most recent activity.
 
-## Overview
+Overview
+Use this endpoint to fetch a list of assets, optionally filtered by whether they are currently issued or have been returned. Results are sorted by a “last updated” timestamp defined as COALESCE(returned_at, issued_at), meaning an asset’s most recent activity drives its position in the list.
 
-Search and retrieve assets, optionally filtering by whether they are currently issued or have been returned. Results are sorted by the asset’s most recent activity, where “last_updated” is computed as the first non-null of returned_at or issued_at.
+- Default behavior: returns all assets sorted by most recent activity (descending).
+- Filtering: restrict to only currently issued or only returned assets.
+- Sorting: ascending or descending by the last updated timestamp.
 
-- Sorting key: last_updated = COALESCE(returned_at, issued_at)
-- Filtering options: Issued (not yet returned) or Returned
-
-## HTTP Method
-
+HTTP Method
 - GET
 
-## Endpoint
-
+Endpoint
 - /api/assets/search
 
-## Function
-
+Function
 - search_assets
 
-## Path Parameters
-
+Path Parameters
 - None
 
-## Query Parameters
-
+Query Parameters
 - status (string, optional)
   - Allowed values: Issued | Returned
-  - Case-sensitive. Any other value (or omitted) applies no status filter.
-  - Issued returns assets with returned_at = null (currently issued).
-  - Returned returns assets with returned_at != null (previously returned).
-
+  - Case-sensitive. If not provided or not one of the allowed values, no status filter is applied.
+  - Issued: returns assets that have not been returned (returned_at is null).
+  - Returned: returns assets that have been returned (returned_at is not null).
 - sort (string, optional)
   - Allowed values: asc | desc
-  - Case-insensitive. Defaults to desc.
-  - Any value other than asc is treated as descending.
-  - Sorting is applied to last_updated = COALESCE(returned_at, issued_at).
+  - Case-insensitive; defaults to desc.
+  - Sorts by last_updated = COALESCE(returned_at, issued_at).
+  - asc: oldest activity first; desc: most recent activity first.
 
-## Request Body
+Request Body
+- None
 
-- None (use query parameters)
+Response
+- 200 OK: JSON array of asset objects.
+  - Each item is an object produced by the server’s _asset_json serializer. The exact fields depend on that serializer and may include typical asset attributes.
+  - Example shape:
+    - [ { … }, { … }, … ]
 
-## Response
+Status Codes
+- 200 OK: Request succeeded.
+- 500 Internal Server Error: Unexpected server-side failure.
 
-- Content type: application/json
-- Body: JSON array of asset objects
-  - The structure of each asset object is defined by the server-side serializer and may include standard asset properties. The array may be empty if no assets match the filters.
+Sample curl
+    curl -X GET "https://your-api.example.com/api/assets/search?status=Issued&sort=asc"
 
-## Status Codes
-
-- 200 OK — Request succeeded; returns a JSON array (possibly empty).
-- 500 Internal Server Error — Unexpected error on the server.
-
-## Notes
-
-- The endpoint does not paginate results.
-- The status filter is case-sensitive and only applies when status is exactly Issued or Returned.
-- The sort parameter is case-insensitive; any non-asc value is treated as descending.
-
-## Sample curl
-
-curl -X GET 'https://your.api.host/api/assets/search?status=Issued&sort=asc' -H 'Accept: application/json'
+Additional Notes
+- If status is provided with any value other than exactly Issued or Returned (matching case), no status filtering will be applied.
+- If sort is provided with any value other than asc (in any case), results default to descending order.

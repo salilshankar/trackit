@@ -1,56 +1,55 @@
+---
 title: Recover Service
-description: POST endpoint that attempts to (re)start the device history service by launching device_history_service.py asynchronously.
-
-# Recover Service
+description: Starts the device history service in the background and returns an immediate status response.
+---
 
 ## Overview
-This endpoint attempts to recover (start or restart) the device history service by spawning a new Python process that runs device_history_service.py. The process is started asynchronously using subprocess.Popen, so the API returns immediately after initiating the launch.
 
-- Side effect: Spawns a new Python process to run device_history_service.py.
-- Non-blocking: Does not wait for the service to fully start before responding.
+Use this endpoint to trigger a recovery action for the device history service. Internally, it launches the script `device_history_service.py` as a background process using the system’s `python` executable. The request returns immediately; it does not wait for the started process to complete.
 
-## Endpoint Summary
-- HTTP method: POST
-- Path: /api/recover
-- Function: recover_service
+Notes:
+- Each call spawns a new process; calling repeatedly may start multiple instances.
+- The server environment must have `python` on the PATH and the script available at `../../device_history_service.py` relative to the running module.
+
+## HTTP Method
+- POST
+
+## Endpoint
+- /api/recover
+
+## Function
+- recover_service
 
 ## Path Parameters
 - None
 
 ## Request Body
-- None
+- None (no payload is required or used)
 
-## Response
-- Content type: application/json
+## Responses
 
-Possible fields:
-- On success (200):
-  - message (string): Confirmation that the recovery attempt was initiated.
-- On error (500):
-  - error (string): Error details describing why the recovery failed (e.g., missing script, execution error).
+- 200 OK
+  - Body:
+    - message (string): Confirmation that the recovery was triggered.
+  - Example:
+    
+        {
+          "message": "Service recovered"
+        }
+
+- 500 Internal Server Error
+  - Body:
+    - error (string): Error description if the process launch fails.
+  - Example:
+    
+        {
+          "error": "Detailed error message"
+        }
+
+## Sample Request
+
+    curl -X POST https://your-server.example.com/api/recover
 
 ## Status Codes
-- 200 OK: The recovery process was initiated successfully.
-- 500 Internal Server Error: An exception occurred while attempting to start the service.
-
-## Notes
-- The script path is resolved relative to the server file location: ../../device_history_service.py.
-- The server must have Python available on the PATH, and the target script must exist and be executable in the server environment.
-
-## Example
-Sample request:
-
-    curl -X POST \
-      https://your-domain.example.com/api/recover
-
-Sample successful response (200):
-
-    {
-      "message": "Service recovered"
-    }
-
-Sample error response (500):
-
-    {
-      "error": "Detailed error message"
-    }
+- 200 — Recovery process successfully initiated.
+- 500 — An error occurred while attempting to start the service.
