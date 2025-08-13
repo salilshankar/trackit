@@ -1,95 +1,102 @@
 ---
-title: App page overview
-description: A centered, single-page layout that presents a page title, an issue form section, an assets table, and device history.
+title: App — Issue Assets, View Asset Table, and Device History
+description: Use the App page to issue assets, browse the asset table, and review device history in a clear, centered layout.
 ---
 
-# App
+# Overview
 
-The App component renders a simple, focused page that brings together three key sections in a clean, centered column layout:
-- A large, centered page title
-- An IssueAssetForm section
-- An AssetTable section
-- A DeviceHistory section
+The App component lays out a simple, focused page that helps you work with assets and devices. It presents:
 
-![App overview](app-overview.png)
+- A prominent, centered page title.
+- An IssueAssetForm section to handle asset issuance.
+- An AssetTable to view assets in a tabular list.
+- A DeviceHistory section to review device-related history.
+
+The content is centered on the page with a comfortable maximum width and vertical spacing between sections for readability.
+
+![page overview](page-overview.png)
 
 > ℹ️ Info  
-> This page is a container for three child components: IssueAssetForm, AssetTable, and DeviceHistory. It uses generous vertical spacing between sections to keep the layout scannable.
+> This page composes three child components: IssueAssetForm, AssetTable, and DeviceHistory. Their exact fields and interactions are defined within those components.
 
-## What this component does
+## What you can do here
 
-- Displays a prominent, centered heading at the top of the page.
-- Shows an IssueAssetForm section for asset-related input.
-- Lists assets in an AssetTable section.
-- Provides a DeviceHistory section for device-related history.
-- Keeps everything centered on the page with comfortable spacing between sections.
+- Issue a new asset using the IssueAssetForm area.
+- Browse assets in the AssetTable.
+- Review device history in the DeviceHistory section.
 
-## How to use it
+## How to use this page
 
-1. Open the page to view the title and the three sections arranged vertically.
-2. Use the IssueAssetForm section to work with asset details as provided by your implementation.
-   - ![submit form](submit-form.png)
-3. Review the AssetTable section to see the current list of assets.
-4. Check the DeviceHistory section to view device-related history information.
-
-> 📘 Note  
-> The exact fields, actions, and contents inside IssueAssetForm, AssetTable, and DeviceHistory are defined by those components. This App component only arranges them on the page.
+1. Start at the top of the page and review the title to confirm you’re in the right place.
+2. In the IssueAssetForm section, complete the form to issue an asset.
+   - When you’re done, submit the form according to the controls provided within that section.
+   - ![issue asset form](issue-asset-form.png)
+3. Scroll to the AssetTable to browse assets.
+   - Look through the listed entries to find what you need.
+   - ![asset table](asset-table.png)
+4. Continue to DeviceHistory to review relevant device events or records.
+   - ![device history](device-history.png)
 
 ## Layout and presentation
 
-- Centered column: Content is centered within a comfortable max width to maintain readability.
-- Vertical spacing: Sections are separated with consistent spacing for clarity.
-- Title styling: The page title is large and bold, centered above the content.
+- The page is centered with a maximum content width for comfortable reading.
+- Sections are stacked vertically with consistent spacing.
+- The page title is large, bold, and centered for quick scanning.
 
-## Developer notes
+> 📘 Note  
+> The AssetTable is rendered with a refresh flag provided by the parent. Any visible refresh behavior or controls are handled inside the table itself.
 
-- IssueAssetForm is rendered with a prop onIssued set to true.
-- AssetTable is rendered with a refresh prop (passed an expression).
-- DeviceHistory is rendered without props.
-- There are no mapped API routes from this component.
+## Mapped routes
 
-> ℹ️ Info  
-> App does not expose its own props. It serves as a parent layout that composes the three sections and passes the props shown above to the child components.
+No mapped API routes are declared by this component.
 
 ---
 title: NotificationBanner
-description: Show a concise red alert with a message and a recovery action your users can click.
+description: Show a compact red alert with a message and an action button that triggers your recovery handler.
 ---
 
-## What it does
+# NotificationBanner
 
-NotificationBanner displays a compact, red-toned banner designed for errors or critical notices. It presents:
+A compact, red-tinted banner for important alerts. It displays your message and includes a small, underlined action button that calls your recovery handler when clicked.
 
-- A message area
-- A small, underlined action button aligned to the right that triggers your recovery callback
-
-It appears with:
-- Red background and red text
-- Padding, rounded corners, and small text size
-- A horizontal layout that spaces the message and action
-
-![Notification banner example](notification-banner.png)
-
-## How to use it
-
-1. Add the component where you need to surface an error or important notice.
-2. Provide `text` with the message you want to display.
-3. Provide an `onRecover` function to run when the user clicks the action button.
-
-### Props
-
-- `text`: The message shown in the banner.
-- `onRecover`: Function called when the action button is clicked.
-
-> 📘 Note  
-> The action button’s click is wired to your `onRecover` callback. Ensure this function handles the recovery path you want (e.g., retrying an action or guiding the user to fix an issue).
-
-## Tips
-
-- Keep the message brief and clear; the banner uses small text and compact spacing.
-- Use this component for error or high-severity alerts (it’s styled in red).
-- Place it near the relevant content so users immediately see what needs attention.
-- Always pass a meaningful `text` value so the banner communicates the issue effectively.
+![notification banner](notification-banner.png)
 
 > ℹ️ Info  
-> There are no mapped API routes associated with this component. Any follow-up actions should be handled inside your `onRecover` callback.
+> Visually, the banner appears as a red background with red text, small type, rounded corners, and the content laid out in a single row with space between the message and the action.
+
+## What it does
+- Shows an alert message.
+- Renders a clickable action on the right that invokes your onRecover handler.
+
+## How to use
+
+1. Provide the message to display via the text prop.
+2. Pass a function to onRecover to handle what should happen when the action is clicked.
+3. Place the banner where you want the alert to appear in your UI.
+
+Example:
+```jsx
+function Page() {
+  const handleRecover = () => {
+    // Your recovery logic here (e.g., retry, reopen, or navigate)
+  };
+
+  return (
+    <NotificationBanner
+      text="We couldn't complete your request."
+      onRecover={handleRecover}
+    />
+  );
+}
+```
+
+## Props
+- text: string — The message shown in the banner.
+- onRecover: function — Called when the action button is clicked.
+
+> 📘 Notes  
+> - The action appears as a small, underlined red link-style button.  
+> - The component’s layout is a single row: message on the left, action on the right.
+
+## Mapped API routes
+None. This component does not map to any API routes; it only triggers your provided onRecover handler.
