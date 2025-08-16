@@ -1,15 +1,16 @@
+---
 title: Search Assets
-description: Retrieve a list of assets, optionally filtered by status (Issued/Returned) and sorted by the most recent update time.
+description: Retrieve a list of assets with optional status filtering and sorting by last updated time.
+---
 
 Overview
-Use this endpoint to list assets with optional filtering by their issuance/return status and sorting by last updated time. The last updated time is defined internally as COALESCE(returned_at, issued_at), meaning returned_at if present, otherwise issued_at. By default, results are returned with the most recently updated assets first.
+Use this endpoint to list assets, optionally filtering by their lifecycle status and sorting by a computed "last updated" timestamp. The last updated value is defined as COALESCE(returned_at, issued_at), meaning returned assets use their returned_at timestamp, while currently issued assets use issued_at. Results are returned as an array of asset objects.
 
-- When status=Issued, only assets that have not been returned yet are included.
-- When status=Returned, only assets that have been returned are included.
-- If status is omitted or any other value, no status filter is applied.
-- Sorting is descending by default; specify sort=asc for ascending order.
+- Results are not paginated; all matching assets are returned.
+- Filtering by status is case-sensitive.
+- Sorting order is case-insensitive, defaulting to descending.
 
-HTTP Method
+HTTP method
 - GET
 
 Endpoint
@@ -18,46 +19,37 @@ Endpoint
 Function
 - search_assets
 
-Path Parameters
+Path parameters
 - None
 
-Query Parameters
+Query parameters
 - status (string, optional)
-  - Allowed values: Issued | Returned
-  - Case-sensitive: must be exactly "Issued" or "Returned"
-  - Behavior:
-    - Issued: assets with returned_at = null
-    - Returned: assets with returned_at != null
-    - Any other value or omitted: no status filter applied
+  - Accepted values: Issued, Returned
+  - Case-sensitive match:
+    - Issued: returns assets where returned_at is null (currently issued)
+    - Returned: returns assets where returned_at is not null
+  - Any other value (including different casing) results in no status filter.
 - sort (string, optional)
-  - Allowed values: asc | desc
+  - Accepted values: asc, desc
+  - Case-insensitive
   - Default: desc
-  - Case-insensitive: value is lowercased internally
-  - Any value other than "asc" is treated as descending
-  - Sorting is performed by an internal last_updated expression = COALESCE(returned_at, issued_at)
+  - Applied to last_updated = COALESCE(returned_at, issued_at)
 
-Request Body
-- None (this is a GET endpoint)
+Request body
+- None
 
 Response
-- 200 OK: JSON array of asset objects.
-  - Each element is the JSON representation of an asset as produced by the server-side serializer (_asset_json). The exact fields depend on that serializer and are not enumerated here.
+- 200 OK: JSON array of asset objects. The exact fields are determined by the server-side serializer and may vary; expect typical asset attributes. Ordering reflects the requested sort on last_updated.
 
-Status Codes
-- 200 OK: Request succeeded; returns an array of assets (possibly empty).
-- 500 Internal Server Error: Unexpected server error.
+Status codes
+- 200 OK: Request succeeded.
+- 500 Internal Server Error: An unexpected error occurred on the server.
 
-Sample Requests
-- List all assets (most recently updated first):
-    curl -X GET "https://your-domain.example/api/assets/search"
+Example usage
+- List all assets (default descending by last_updated): GET /api/assets/search
+- List currently issued assets, ascending by last_updated: GET /api/assets/search?status=Issued&sort=asc
+- List returned assets (default descending): GET /api/assets/search?status=Returned
 
-- List only issued (not yet returned) assets:
-    curl -X GET "https://your-domain.example/api/assets/search?status=Issued"
-
-- List only returned assets, oldest first:
-    curl -X GET "https://your-domain.example/api/assets/search?status=Returned&sort=asc"
-
-Notes
-- There is no pagination in this route; all matching assets are returned.
-- The last_updated value is used only for sorting and is not added as a field in the response.
-- The sort parameter is lenient: only "asc" triggers ascending order; any other value results in descending order.
+Sample curl
+curl -X GET "https://your-domain.example.com/api/assets/search?status=Issued&sort=asc" \
+  -H "Accept: application/json"

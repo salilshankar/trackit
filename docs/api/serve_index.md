@@ -1,17 +1,14 @@
-title: GET / — Serve the index page
-description: Returns the application’s main HTML page from app/static/index.html.
+---
+title: GET / (Serve Index)
+description: Serves the main index.html file from the app/static directory, typically the entry point for a web UI or SPA.
+---
 
 Overview
-This endpoint serves the main HTML page for the application by returning the index.html file from the app/static directory. It is typically used as the entry point for a web UI or single-page application.
+This route serves the frontend entrypoint for the application. When a client requests the root path (/), the server returns the index.html file located in app/static. This is commonly used to deliver a single-page application (SPA) shell or a static homepage.
 
-- Function: serve_index
-- Serves: app/static/index.html
-
-HTTP Method(s)
-- GET
-
-Endpoint
-- Path: /
+- HTTP Method(s): GET
+- Endpoint Path: /
+- Function Name: serve_index
 
 Path Parameters
 - None
@@ -20,13 +17,13 @@ Request Body
 - None
 
 Response
-- Content: The index.html file (HTML document)
-- Content-Type: text/html (as served by Flask’s send_from_directory)
+- Content Type: text/html
+- Body: The contents of app/static/index.html
 
 Status Codes
-- 200 OK: Successfully returned index.html
-- 404 Not Found: index.html not found in app/static
-- 500 Internal Server Error: An unexpected server error occurred
+- 200 OK: index.html was found and returned successfully.
+- 404 Not Found: index.html does not exist in app/static.
+- 500 Internal Server Error: An unexpected error occurred while serving the file.
 
-Sample curl
+Example Request (curl)
     curl -i http://localhost:5000/

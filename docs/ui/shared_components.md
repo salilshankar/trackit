@@ -1,98 +1,89 @@
 ---
-title: App
-description: A page-level layout that centers content and renders a heading, an issue form, an asset table, and a device history section.
+title: App — Issue Assets, View Asset Table, and Device History
+description: Use the App page to issue assets, browse the asset table, and review device history in a clear, centered layout.
 ---
 
-# App
+# Overview
 
-The App component lays out a simple, centered page for working with assets and devices. It renders:
-- A prominent, centered page heading (h1).
-- An IssueAssetForm component.
-- An AssetTable component.
-- A DeviceHistory component.
+The App component lays out a simple, focused page that helps you work with assets and devices. It presents:
 
-![App layout overview](app-layout.png)
+- A prominent, centered page title.
+- An IssueAssetForm section to handle asset issuance.
+- An AssetTable to view assets in a tabular list.
+- A DeviceHistory section to review device-related history.
+
+The content is centered on the page with a comfortable maximum width and vertical spacing between sections for readability.
+
+![page overview](page-overview.png)
 
 > ℹ️ Info  
-> The content of the page title (h1) is defined elsewhere; this component ensures the heading is displayed and centered.
+> This page composes three child components: IssueAssetForm, AssetTable, and DeviceHistory. Their exact fields and interactions are defined within those components.
 
-## What this component does
+## What you can do here
 
-- Centers the content on the page with a comfortable maximum width and vertical spacing between sections.
-- Displays a large, centered h1 heading at the top.
-- Mounts IssueAssetForm with a boolean prop `onIssued` set to true.
-- Mounts AssetTable with a `refresh` prop sourced from an expression.
-- Mounts DeviceHistory with its default configuration (no props provided).
+- Issue a new asset using the IssueAssetForm area.
+- Browse assets in the AssetTable.
+- Review device history in the DeviceHistory section.
 
-## How to use it
+## How to use this page
 
-1. Open the page that renders App. You’ll see a centered layout with a page title at the top.
-2. Use the IssueAssetForm section to provide the details required by that form.
-   - In this App, the form receives `onIssued={true}`.
-   - Refer to the IssueAssetForm documentation for how this prop affects the form’s behavior.
-   ![submit form](submit-form.png)
-3. Review the AssetTable section to view its output.
-   - The table receives a `refresh` prop from an expression (named `refreshFlag` in this implementation).
-   - Consult the AssetTable documentation for how it responds to changes in `refresh`.
-   ![asset table](asset-table.png)
-4. Check the DeviceHistory section for its default output.
-   ![device history](device-history.png)
-
-## Layout and visual behavior
-
-- Content is centered with a constrained width for readability.
-- Sections are vertically spaced for clear separation.
-- The page heading is large, bold, and centered.
-
-> 📘 Note  
-> This component focuses on layout and composition. Field definitions, table columns, interactions, and behaviors are controlled by the IssueAssetForm, AssetTable, and DeviceHistory components themselves.
+1. Start at the top of the page and review the title to confirm you’re in the right place.
+2. In the IssueAssetForm section, complete the form to issue an asset.
+   - When you’re done, submit the form according to the controls provided within that section.
+   - ![issue asset form](issue-asset-form.png)
+3. Scroll to the AssetTable to browse assets.
+   - Look through the listed entries to find what you need.
+   - ![asset table](asset-table.png)
+4. Continue to DeviceHistory to review relevant device events or records.
+   - ![device history](device-history.png)
 
 ## Props
 
-App does not accept any props.
+- The page is centered with a maximum content width for comfortable reading.
+- Sections are stacked vertically with consistent spacing.
+- The page title is large, bold, and centered for quick scanning.
 
-Child components and their provided props in this App:
-- IssueAssetForm: `onIssued` (boolean) set to true.
-- AssetTable: `refresh` bound to an expression.
-- DeviceHistory: no props.
+> 📘 Note  
+> The AssetTable is rendered with a refresh flag provided by the parent. Any visible refresh behavior or controls are handled inside the table itself.
 
-## Mapped API routes
+## Mapped routes
 
-No API routes are mapped in this component.
+No mapped API routes are declared by this component.
 
 ---
 title: NotificationBanner
-description: A compact red-styled banner for inline alerts, showing your message with a small recovery action.
+description: Show a compact red alert with a message and an action button that triggers your recovery handler.
 ---
 
 # NotificationBanner
 
-## What it does
-NotificationBanner displays an inline alert with a red theme. It shows your message and provides a small, underlined action button on the right. Clicking the button triggers your onRecover callback.
+A compact, red-tinted banner for important alerts. It displays your message and includes a small, underlined action button that calls your recovery handler when clicked.
 
 ![notification banner](notification-banner.png)
 
 > ℹ️ Info  
-> This component renders UI only; there are no mapped API routes or automatic network calls.
+> Visually, the banner appears as a red background with red text, small type, rounded corners, and the content laid out in a single row with space between the message and the action.
 
-## How to use it
+## What it does
+- Shows an alert message.
+- Renders a clickable action on the right that invokes your onRecover handler.
 
-1. Add the component to your view where an inline alert is needed.
-2. Pass a short, clear message via the text prop.
-3. Provide an onRecover function to handle the user's action when they click the button.
+## How to use
+
+1. Provide the message to display via the text prop.
+2. Pass a function to onRecover to handle what should happen when the action is clicked.
+3. Place the banner where you want the alert to appear in your UI.
 
 Example:
 ```jsx
-import { NotificationBanner } from './NotificationBanner';
-
-function Example() {
+function Page() {
   const handleRecover = () => {
-    // Your recovery logic here (e.g., retry an action)
+    // Your recovery logic here (e.g., retry, reopen, or navigate)
   };
 
   return (
     <NotificationBanner
-      text="Something went wrong while saving."
+      text="We couldn't complete your request."
       onRecover={handleRecover}
     />
   );
@@ -100,29 +91,12 @@ function Example() {
 ```
 
 ## Props
+- text: string — The message shown in the banner.
+- onRecover: function — Called when the action button is clicked.
 
-- text: string  
-  The message displayed in the banner.
-- onRecover: function  
-  Called when the user clicks the action button.
+> 📘 Notes  
+> - The action appears as a small, underlined red link-style button.  
+> - The component’s layout is a single row: message on the left, action on the right.
 
-## UI and behavior
-
-- Layout and styling
-  - Red background with red text for an alert/issue (bg-red-100, text-red-800).
-  - Compact, rounded banner with small text and spacing (p-2, rounded, mb-2, text-sm).
-  - Horizontal layout with space between the message and the action (flex, justify-between, items-center).
-- Content
-  - Message area: rendered in a span.
-  - Action button: small, red, and underlined (text-red-600, underline, text-xs).
-- Interaction
-  - Clicking the button calls the onRecover function you provide.
-
-> 📘 Note  
-> The component exposes a single user action via the button click (onRecover). It does not navigate or refresh by itself.
-
-## Tips
-
-- Keep text concise and actionable to fit the compact layout.
-- Place the banner close to the context of the issue so users understand what the message refers to.
-- Ensure the action tied to onRecover is safe to attempt multiple times, as users may click repeatedly.
+## Mapped API routes
+None. This component does not map to any API routes; it only triggers your provided onRecover handler.
