@@ -1,40 +1,36 @@
 title: List Assets
-description: Retrieve all assets as JSON, ordered by most recently issued first.
+description: Retrieve all assets as a JSON array, ordered by newest issued_at first.
 
 Overview
-This endpoint returns a JSON array of assets. Results are ordered by the asset’s issued_at timestamp in descending order (newest first). If no assets exist, the response is an empty array.
+This endpoint returns all assets as a JSON array. Results are ordered by the issued_at timestamp in descending order (newest first). Each asset is serialized via the server’s _asset_json helper.
 
-- Content type: application/json
+- HTTP method: GET
+- Endpoint: /api/assets
+- Function: list_assets
 
-HTTP Method
-- GET
-
-Endpoint
-- /api/assets
-
-Function
-- list_assets
-
-Path Parameters
+Path parameters
 - None
 
-Query Parameters
+Query parameters
 - None
 
-Request Body
+Request body
 - None
 
 Response
-- Type: JSON array
-- Items: Each item is an asset object serialized by the server-side helper _asset_json(a).
-  - The exact fields of each asset object are defined by _asset_json and may include a subset or transformation of the Asset model data.
+- Content type: application/json
+- Body: An array of asset objects
+  - Item type: object
+  - Fields: Defined by the server-side _asset_json serializer (not exposed here)
+- Ordering: Descending by issued_at
 
-Sorting
-- Ordered by Asset.issued_at in descending order.
-
-Status Codes
+Status codes
 - 200 OK: The list of assets was returned successfully.
 - 500 Internal Server Error: An unexpected error occurred on the server.
 
 Sample curl
-curl -X GET https://your-server.example.com/api/assets
+curl -X GET https://your.api.host/api/assets -H "Accept: application/json"
+
+Notes
+- This route returns all assets without pagination in the current implementation.
+- The exact fields of each asset are determined by the _asset_json function.

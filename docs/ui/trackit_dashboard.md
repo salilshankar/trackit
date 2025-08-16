@@ -1,148 +1,121 @@
 ---
 title: DeviceHistory
-description: Look up details by employee email and handle errors with a recovery action.
+description: Look up device history by entering an employee email, submit with the blue button, and handle errors via a recovery action.
 ---
 
 # DeviceHistory
 
-Use the DeviceHistory component to enter an employee email, run an action from a primary blue button, view small-text details, and, if something goes wrong, see a notification banner with a recovery option.
+## What this component does
+DeviceHistory presents a simple, card-style panel where you:
+- Enter an employee email in a text field.
+- Submit using a blue button next to the field.
+- See status or error messages in a notification banner.
+- View resulting details in a text section below (labels and values are shown with emphasized headings).
 
-![Device history card](device-history.png)
-
-## What it does
-
-- Displays a card with a header.
-- Provides an input field with the placeholder “Employee Email.”
-- Includes a primary blue button next to the input.
-- Shows a notification banner when there’s an error, with a recovery action.
-- Renders a details area using small text with paragraphs and bold labels.
-
-## How to use it
-
-1. Find the Employee Email field.
-   - Type the employee’s email address.
-   - Example: jane.doe@company.com
-   ![Enter employee email](enter-email.png)
-
-2. Click the blue button to proceed.
-   - The button appears next to the email field.
-
-3. Review the details area below.
-   - Information is shown in small text with bold labels and paragraphs.
-
-4. If an error appears, use the recovery option in the notification banner.
-   - The banner displays the error text and offers a recovery action.
-   ![Notification banner with recovery](notification-banner.png)
-
-## Tips and notes
-
-- The placeholder “Employee Email” hints at the expected input format. Validation rules are not displayed in the UI.
-- The details area uses small text and bold labels, which is helpful for scanning key information.
-- The primary button is styled blue; the exact label may vary based on your implementation.
-
-> 📘 Note  
-> The notification banner only appears when there’s error text to show. It also provides a recovery action you can run directly from the banner.
-
-## Related API route
-
-When you use the recovery action in the notification banner, the app maps it to:
-- POST /api/recover
+![enter email](enter-email.png)
 
 > ℹ️ Info  
-> This route is associated with the recovery action exposed in the banner. Integration specifics depend on your application setup.
+> The notification banner displays an error message when available and provides a recovery action you can use to try resolving the issue.
+
+## How to use it
+1. Type the email into the Employee Email field.
+2. Select the blue button to submit.
+3. If information is available, review the details displayed beneath the form.
+4. If an error appears, use the recovery option in the banner.
+
+![error banner](error-banner.png)
+
+## Tips and behaviors
+- The email field shows a placeholder: “Employee Email.”
+- The submit control is a blue button positioned next to the email field.
+- When an error occurs, a notification banner appears with the message and a recovery option.
+
+> 📘 Note  
+> The lower section uses paragraph text with bold labels to present details. Exact labels and values depend on the data returned.
+
+## Related API route
+- POST /api/recover  
+  The recovery action in the notification banner triggers a recovery flow backed by this endpoint.
 
 ---
 title: AssetTable
-description: Browse assets in a clean table with filtering, sorting, and inline edits — all from a single view.
+description: Filter, sort, and edit assets inline in a compact, nine‑column table. NEW: filters.
 ---
 
 # AssetTable
 
-The AssetTable displays your assets in a structured table with top-of-page controls for filtering and sorting. You can make quick inline edits to key fields directly within each row.
+Quickly browse your assets in a clean table, apply filters, and make inline edits without leaving the page.
+
+> ℹ️ Info  
+> This release adds a filters bar at the top of the table.
 
 ![Asset table overview](asset-table-overview.png)
 
-## What this component does
+## What it does
 
-- Presents assets inside a white, card-style container.
-- Shows a header and a controls row with:
-  - A Status filter dropdown (three selectable options).
-  - A Sort dropdown with two options (ascending and descending).
-- Includes a small gray helper area beneath the controls for contextual info.
-- Renders a multi-column table (nine columns) with rows of asset data.
-- Supports inline editing within rows:
-  - A small text field for a model/detail.
+- Presents assets in a white, card-like container with a header.
+- Shows a toolbar with:
+  - Two dropdowns (left to right): one for filtering the list, one for ordering it.
+  - A small, gray helper line beneath the controls.
+- Renders a 9‑column table with a header row and data rows.
+- Lets you edit two fields inline within each row:
+  - A single-line text field (compact width) for a model or similar identifier.
   - A multi-line comments area that preserves line breaks.
-- Provides an actions cell with:
-  - A primary blue action button (can be disabled).
-  - A secondary underline-style button.
-  - Additional action buttons for row-level tasks.
-- Shows a centered, full-width message row when there are no items to display.
+- Includes an actions cell in each row with:
+  - A prominent blue button that can appear disabled.
+  - A secondary underlined text-style button.
+  - Two additional action buttons.
 
-> 📘 Note  
-> Comments are shown with preserved line breaks (whitespace is kept, and text wraps naturally).
+![Filters](asset-table-filters.png)
 
 ## How to use it
 
-1. Filter your list
-   - Use the first dropdown to filter by status.
-   - There are three options available. Select the one that matches what you want to see.
+1. Filter the list
+   - Open the first dropdown in the toolbar and choose an option to narrow down what’s shown.
 
-2. Sort the results
-   - Use the second dropdown to choose the sort order.
-   - Pick ascending or descending to reorder the table.
+2. Change the order
+   - Use the second dropdown to adjust how the table is ordered.
 
-3. Review the table
-   - Scan the nine columns to view asset details.
-   - If present, refer to the small gray helper text above the table for context (e.g., counts or hints).
+3. Edit a row
+   - Click into the single-line field to update the item’s model or identifier.
+   - Use the multi-line area to enter or update comments. Line breaks are preserved in display.
+   - Select the blue button in the row to apply your changes, or choose the underlined button to back out.
 
-4. Make inline edits
-   - In any row, update the small text field to change a model/detail.
-   - Use the multi-line comments area to add or edit notes.
-   - Select the primary blue button in the same row to apply your change.
-   - Use the underline-style button to cancel changes.
+![Inline editing](asset-table-editing.png)
 
-   ![Inline edit in a row](asset-inline-edit.png)
+## Tips and states
 
-5. Use row actions
-   - Additional buttons may appear in the actions cell for item-level tasks. Select the one you need.
+- Comments formatting
+  - Multi-line comments are displayed with preserved line breaks for readability.
 
-> ℹ️ Info  
-> The primary blue button can appear disabled (faded). When it’s disabled, wait a moment or review your changes before trying again.
+- Button states
+  - The blue action button may appear disabled (faded) when it’s not available.
 
-## Tips and empty states
+- Empty state
+  - If there are no items to display, the table shows a centered, gray message spanning all columns.
 
-- Line breaks in comments are retained, making longer notes easier to read.
-- If the table is empty or a filter returns no results, you’ll see a centered message spanning all columns.
+> 📘 Note  
+> Exact labels and options for the dropdowns and table columns may vary based on your implementation.
 
 ## API routes
 
-No mapped API routes are declared for this component.
+No mapped API routes are shown for this component.
 
 ---
 title: IssueAssetForm
-description: A simple form for issuing an asset by selecting an asset type and submitting. Submits to POST /api/assets and supports an optional onIssued callback.
+description: A simple form to issue an asset by selecting its type and submitting.
 ---
 
-# IssueAssetForm
-
 ## What this component does
-IssueAssetForm renders a simple form that lets you choose an asset type from a dropdown and submit your choice to issue an asset.
 
-- Field: a required asset type dropdown (name: asset_type)
-- Options: Laptop, Monitor, Keyboard, Mouse, Phone, Tablet, Other
-- Action: a submit button to send the form
+IssueAssetForm renders a lightweight form that lets you choose an asset type from a dropdown and submit the request to issue it. The form appears as a white, rounded card with padding and a shadow.
 
-> ℹ️ Info  
-> The submit button may be disabled during submission.
-
-> 📘 Note  
-> The dropdown includes an initial blank option. You must select a value to submit.
+![submit form](submit-form.png)
 
 ## How to use it
 
-1. Open the form and locate the asset type dropdown.
-2. Choose an asset type:
+1. Open the form in your app.
+2. In the Asset type dropdown, choose one of the available options:
    - Laptop
    - Monitor
    - Keyboard
@@ -150,23 +123,20 @@ IssueAssetForm renders a simple form that lets you choose an asset type from a d
    - Phone
    - Tablet
    - Other
-3. Select Submit to issue the asset.
+3. Select the option you need, then press the submit button to send your request.
 
-![submit form](submit-form.png)
+> 📘 Note  
+> The dropdown includes an initial empty option. You must choose a value before submitting.
 
 ## Tips and validations
 
-- The asset type is required. If left blank, the browser will prevent submission until you choose a value.
-- Use Other if your asset type isn’t listed.
+- The asset type field is required. If you don’t select a type, the form won’t submit.
+- The submit button may be disabled while the form is processing, preventing duplicate submissions.
+- If your asset doesn’t match the listed types, choose Other.
 
-## Mapped API route
+## API
 
-On submit, the form is tied to the following endpoint:
-
+Submitting this form triggers a request to:
 - POST /api/assets
 
-This route is used to issue the asset based on your selection.
-
-## Props
-
-- onIssued (function, optional): Callback prop you can provide to run custom logic after the asset is issued.
+This route is used to create/issue the asset based on your selection.
