@@ -1,95 +1,128 @@
 ---
-title: App page overview
-description: A centered, single-page layout that presents a page title, an issue form section, an assets table, and device history.
+title: App
+description: A page-level layout that centers content and renders a heading, an issue form, an asset table, and a device history section.
 ---
 
 # App
 
-The App component renders a simple, focused page that brings together three key sections in a clean, centered column layout:
-- A large, centered page title
-- An IssueAssetForm section
-- An AssetTable section
-- A DeviceHistory section
+The App component lays out a simple, centered page for working with assets and devices. It renders:
+- A prominent, centered page heading (h1).
+- An IssueAssetForm component.
+- An AssetTable component.
+- A DeviceHistory component.
 
-![App overview](app-overview.png)
+![App layout overview](app-layout.png)
 
 > ℹ️ Info  
-> This page is a container for three child components: IssueAssetForm, AssetTable, and DeviceHistory. It uses generous vertical spacing between sections to keep the layout scannable.
+> The content of the page title (h1) is defined elsewhere; this component ensures the heading is displayed and centered.
 
 ## What this component does
 
-- Displays a prominent, centered heading at the top of the page.
-- Shows an IssueAssetForm section for asset-related input.
-- Lists assets in an AssetTable section.
-- Provides a DeviceHistory section for device-related history.
-- Keeps everything centered on the page with comfortable spacing between sections.
+- Centers the content on the page with a comfortable maximum width and vertical spacing between sections.
+- Displays a large, centered h1 heading at the top.
+- Mounts IssueAssetForm with a boolean prop `onIssued` set to true.
+- Mounts AssetTable with a `refresh` prop sourced from an expression.
+- Mounts DeviceHistory with its default configuration (no props provided).
 
 ## How to use it
 
-1. Open the page to view the title and the three sections arranged vertically.
-2. Use the IssueAssetForm section to work with asset details as provided by your implementation.
-   - ![submit form](submit-form.png)
-3. Review the AssetTable section to see the current list of assets.
-4. Check the DeviceHistory section to view device-related history information.
+1. Open the page that renders App. You’ll see a centered layout with a page title at the top.
+2. Use the IssueAssetForm section to provide the details required by that form.
+   - In this App, the form receives `onIssued={true}`.
+   - Refer to the IssueAssetForm documentation for how this prop affects the form’s behavior.
+   ![submit form](submit-form.png)
+3. Review the AssetTable section to view its output.
+   - The table receives a `refresh` prop from an expression (named `refreshFlag` in this implementation).
+   - Consult the AssetTable documentation for how it responds to changes in `refresh`.
+   ![asset table](asset-table.png)
+4. Check the DeviceHistory section for its default output.
+   ![device history](device-history.png)
+
+## Layout and visual behavior
+
+- Content is centered with a constrained width for readability.
+- Sections are vertically spaced for clear separation.
+- The page heading is large, bold, and centered.
 
 > 📘 Note  
-> The exact fields, actions, and contents inside IssueAssetForm, AssetTable, and DeviceHistory are defined by those components. This App component only arranges them on the page.
+> This component focuses on layout and composition. Field definitions, table columns, interactions, and behaviors are controlled by the IssueAssetForm, AssetTable, and DeviceHistory components themselves.
 
-## Layout and presentation
+## Props
 
-- Centered column: Content is centered within a comfortable max width to maintain readability.
-- Vertical spacing: Sections are separated with consistent spacing for clarity.
-- Title styling: The page title is large and bold, centered above the content.
+App does not accept any props.
 
-## Developer notes
+Child components and their provided props in this App:
+- IssueAssetForm: `onIssued` (boolean) set to true.
+- AssetTable: `refresh` bound to an expression.
+- DeviceHistory: no props.
 
-- IssueAssetForm is rendered with a prop onIssued set to true.
-- AssetTable is rendered with a refresh prop (passed an expression).
-- DeviceHistory is rendered without props.
-- There are no mapped API routes from this component.
+## Mapped API routes
 
-> ℹ️ Info  
-> App does not expose its own props. It serves as a parent layout that composes the three sections and passes the props shown above to the child components.
+No API routes are mapped in this component.
 
 ---
 title: NotificationBanner
-description: Show a concise red alert with a message and a recovery action your users can click.
+description: A compact red-styled banner for inline alerts, showing your message with a small recovery action.
 ---
 
+# NotificationBanner
+
 ## What it does
+NotificationBanner displays an inline alert with a red theme. It shows your message and provides a small, underlined action button on the right. Clicking the button triggers your onRecover callback.
 
-NotificationBanner displays a compact, red-toned banner designed for errors or critical notices. It presents:
+![notification banner](notification-banner.png)
 
-- A message area
-- A small, underlined action button aligned to the right that triggers your recovery callback
-
-It appears with:
-- Red background and red text
-- Padding, rounded corners, and small text size
-- A horizontal layout that spaces the message and action
-
-![Notification banner example](notification-banner.png)
+> ℹ️ Info  
+> This component renders UI only; there are no mapped API routes or automatic network calls.
 
 ## How to use it
 
-1. Add the component where you need to surface an error or important notice.
-2. Provide `text` with the message you want to display.
-3. Provide an `onRecover` function to run when the user clicks the action button.
+1. Add the component to your view where an inline alert is needed.
+2. Pass a short, clear message via the text prop.
+3. Provide an onRecover function to handle the user's action when they click the button.
 
-### Props
+Example:
+```jsx
+import { NotificationBanner } from './NotificationBanner';
 
-- `text`: The message shown in the banner.
-- `onRecover`: Function called when the action button is clicked.
+function Example() {
+  const handleRecover = () => {
+    // Your recovery logic here (e.g., retry an action)
+  };
+
+  return (
+    <NotificationBanner
+      text="Something went wrong while saving."
+      onRecover={handleRecover}
+    />
+  );
+}
+```
+
+## Props
+
+- text: string  
+  The message displayed in the banner.
+- onRecover: function  
+  Called when the user clicks the action button.
+
+## UI and behavior
+
+- Layout and styling
+  - Red background with red text for an alert/issue (bg-red-100, text-red-800).
+  - Compact, rounded banner with small text and spacing (p-2, rounded, mb-2, text-sm).
+  - Horizontal layout with space between the message and the action (flex, justify-between, items-center).
+- Content
+  - Message area: rendered in a span.
+  - Action button: small, red, and underlined (text-red-600, underline, text-xs).
+- Interaction
+  - Clicking the button calls the onRecover function you provide.
 
 > 📘 Note  
-> The action button’s click is wired to your `onRecover` callback. Ensure this function handles the recovery path you want (e.g., retrying an action or guiding the user to fix an issue).
+> The component exposes a single user action via the button click (onRecover). It does not navigate or refresh by itself.
 
 ## Tips
 
-- Keep the message brief and clear; the banner uses small text and compact spacing.
-- Use this component for error or high-severity alerts (it’s styled in red).
-- Place it near the relevant content so users immediately see what needs attention.
-- Always pass a meaningful `text` value so the banner communicates the issue effectively.
-
-> ℹ️ Info  
-> There are no mapped API routes associated with this component. Any follow-up actions should be handled inside your `onRecover` callback.
+- Keep text concise and actionable to fit the compact layout.
+- Place the banner close to the context of the issue so users understand what the message refers to.
+- Ensure the action tied to onRecover is safe to attempt multiple times, as users may click repeatedly.

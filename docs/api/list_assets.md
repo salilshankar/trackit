@@ -1,40 +1,42 @@
 title: List Assets
-description: Retrieve all assets as JSON, ordered by most recently issued first.
+description: Retrieve all assets as a JSON array, ordered by most recently issued first.
 
 Overview
-This endpoint returns a JSON array of assets. Results are ordered by the asset’s issued_at timestamp in descending order (newest first). If no assets exist, the response is an empty array.
+This endpoint returns all Asset records as a JSON array. Results are sorted in reverse chronological order based on the asset’s issued_at timestamp (most recent first). Each asset is serialized using the server-side _asset_json helper.
 
-- Content type: application/json
+- HTTP method: GET
+- Endpoint: /api/assets
+- Function: list_assets
 
-HTTP Method
-- GET
-
-Endpoint
-- /api/assets
-
-Function
-- list_assets
-
-Path Parameters
+Path parameters
 - None
 
-Query Parameters
+Query parameters
 - None
 
-Request Body
+Request body
 - None
 
 Response
-- Type: JSON array
-- Items: Each item is an asset object serialized by the server-side helper _asset_json(a).
-  - The exact fields of each asset object are defined by _asset_json and may include a subset or transformation of the Asset model data.
+- Content type: application/json
+- Body: An array of asset objects
+  - Type: array<object>
+  - Ordering: Descending by issued_at (newest first)
+  - Note: The exact fields of each object are defined by the server’s _asset_json serializer for Asset.
 
-Sorting
-- Ordered by Asset.issued_at in descending order.
+Status codes
+- 200 OK — Successfully returned the list of assets.
+- 500 Internal Server Error — An unexpected error occurred on the server.
 
-Status Codes
-- 200 OK: The list of assets was returned successfully.
-- 500 Internal Server Error: An unexpected error occurred on the server.
+Example request
+$ curl -sS -X GET http://localhost:5000/api/assets -H "Accept: application/json"
 
-Sample curl
-curl -X GET https://your-server.example.com/api/assets
+Example response (truncated shape)
+[
+  { ... },
+  { ... }
+]
+
+Notes
+- This endpoint does not support pagination or filtering by default.
+- If you need specific fields or a different sort order, check the implementation of _asset_json or related endpoints for filtering/pagination support.

@@ -1,41 +1,33 @@
 ---
 title: GET /health
-description: Simple health check endpoint that returns the service status as JSON.
+description: Lightweight health check endpoint that returns the service status as JSON.
 ---
 
 Overview
-This endpoint provides a basic health check for the service. It returns a small JSON payload indicating the application is up and responsive. Useful for load balancers, monitoring systems, and uptime checks.
+This endpoint provides a simple health check to verify that the service is up and responsive. It returns a minimal JSON payload indicating operational status, making it suitable for uptime monitoring and load balancer health probes.
 
-HTTP Method(s)
-- GET
-
-Endpoint
+Endpoint details
+- HTTP method: GET
 - Path: /health
+- Function: health
 
-Function
-- Name: health
-
-Path Parameters
+Path parameters
 - None
 
-Query Parameters
-- None
-
-Request Body
+Request body
 - None
 
 Response
 - Content type: application/json
-- Body fields:
-  - status (string): The current health status of the service. Example: "ok"
+- Body:
+  - status (string): The current service status. Example: "ok"
 
-Status Codes
+Status codes
 - 200 OK: The service is healthy and responding.
 
-Sample curl Request
-  curl -X GET https://your-domain.example.com/health -H "Accept: application/json"
+Sample curl request
+curl -X GET https://your-domain.example.com/health
 
-Sample Response
-  {
-    "status": "ok"
-  }
+Notes
+- No request body is required.
+- This endpoint is typically polled by monitoring tools to assess service availability.
