@@ -25,7 +25,7 @@ def issue_asset():
     db.session.add(asset)
     db.session.commit()
     return jsonify({"message": "Asset issued", "id": asset.id}), 201
-# Dummy change
+# A change to show PR workflow
 def _asset_json(a: Asset):
     """Consistent shape incl. derived status/last_updated."""
     status = "Returned" if a.returned_at else "Issued"
