@@ -18,7 +18,7 @@ Function
 - return_asset
 
 Path Parameters
-- asset_id (integer): The unique ID of the asset to mark as returned.
+- asset_id (integer): The unique identifier of the asset to mark as returned.
 
 Request Body
 - None. This endpoint does not accept a request body.

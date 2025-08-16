@@ -1,3 +1,4 @@
+---
 title: Issue Asset
 description: Create a new asset issuance record for an employee. Requires basic employee and asset details and returns the created asset ID.
 
